@@ -28,6 +28,7 @@ const Home = () => {
 
 
   return (
+
     <div className="p-4 bg-gray-100 ">
   
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">

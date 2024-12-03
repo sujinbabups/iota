@@ -4,7 +4,7 @@ const TransportationDetails = () => {
   return (
     <div>
 
-<h1>TransportationDetails</h1>
+      <h1>TransportationDetails</h1>
     </div>
   )
 }
