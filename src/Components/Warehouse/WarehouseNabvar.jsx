@@ -9,12 +9,13 @@ const WarehouseNavbar = () => {
     <nav className="bg-green-900 text-white p-4 flex justify-between items-center shadow-md">
       <div className="flex items-center">
         <Link 
-          to="/warehouse" 
+          to="/warehousedashboard" 
           className="text-2xl font-bold hover:text-blue-200 transition-colors"
         >
           Warehouse Management
         </Link>
       </div>
+      <Link to="/">
       <div className="flex items-center">
         <button 
          
@@ -24,6 +25,7 @@ const WarehouseNavbar = () => {
           <span>Logout</span>
         </button>
       </div>
+      </Link>
     </nav>
   )
 }
