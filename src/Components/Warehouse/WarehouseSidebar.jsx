@@ -42,7 +42,7 @@ const WarehouseSidebar = () => {
   return (
     <div className="w-64 bg-white border-r  shadow-sm">
       <div className="p-4 border-b border-green-500">
-        <h2 className="text-xl font-bold text-gray-800">Warehouse</h2>
+       <Link to='/warehousedashboard'> <h2 className="text-xl font-bold text-gray-800">Warehouse</h2></Link>
       </div>
       <nav className="p-4 ">
         <ul className="space-y-2">

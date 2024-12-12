@@ -65,7 +65,7 @@ const SeedCard = ({ seed, onDelete, onUpdate }) => {
 
   const renderViewMode = () => (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 ">
         <h3 className="text-xl font-bold text-green-700">{seed.seedName}</h3>
         <div className="flex items-center space-x-2">
           <button 
@@ -261,7 +261,7 @@ const SeedCard = ({ seed, onDelete, onUpdate }) => {
   );
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300 ">
       {isEditing ? renderEditMode() : renderViewMode()}
     </div>
   );
@@ -283,7 +283,7 @@ const SeedDisplay = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 ml-[15%] mt-[-15%] ">
       <h2 className="text-3xl font-bold text-center mb-8 text-green-800">Registered Seeds</h2>
       
       {seeds.length === 0 ? (

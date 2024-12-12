@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import OrderModal from '../../../Components/Warehouse/OrderModal';
 
 const seedDetails = [
   { orderId: 'ORD001', seed: 'Wheat', quantity: 50, paymentStatus: 'Paid' },
@@ -7,20 +8,38 @@ const seedDetails = [
   { orderId: 'ORD004', seed: 'Barley', quantity: 40, paymentStatus: 'Paid' },
 ];
 
-const OrderTable = () => {
-  const [seeds, setSeed] = useState(seedDetails);
+const ViewOrders = () => {
+  const [seeds, setSeeds] = useState(seedDetails);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const handleMatchOrder = (orderId) => {
-    alert(`Order ${orderId} has been matched!`);
+  const handleMatchOrder = (order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmMatch = (orderId, matchedQuantity) => {
+    // Update the order in the seeds array
+    const updatedSeeds = seeds.map(seed => 
+      seed.orderId === orderId 
+        ? { ...seed, matchedQuantity, status: 'Matched' } 
+        : seed
+    );
+    setSeeds(updatedSeeds);
+
+    // You can add additional logic here like:
+    // - Updating inventory
+    // - Sending match confirmation to backend
+    console.log(`Order ${orderId} matched with quantity ${matchedQuantity}`);
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-md shadow-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-md shadow-lg mt-[-12%]">
       <h2 className="text-2xl font-bold text-center text-green-800 mb-6">All Orders</h2>
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-green-300">
           <thead>
-            <tr className="  text-green-800">
+            <tr className="text-green-800">
               <th className="px-4 py-2 border border-green-300">Order ID</th>
               <th className="px-4 py-2 border border-green-300">Seed</th>
               <th className="px-4 py-2 border border-green-300">Quantity</th>
@@ -55,7 +74,7 @@ const OrderTable = () => {
                 <td className="px-4 py-2 border border-green-300 text-center">
                   {seed.paymentStatus === 'Paid' && (
                     <button
-                      onClick={() => handleMatchOrder(seed.orderId)}
+                      onClick={() => handleMatchOrder(seed)}
                       className="bg-green-800 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-900 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-900 focus:ring-opacity-50"
                     >
                       Match Order
@@ -67,8 +86,17 @@ const OrderTable = () => {
           </tbody>
         </table>
       </div>
+
+      {isModalOpen && (
+        <OrderModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          orderDetails={selectedOrder}
+          onConfirmMatch={handleConfirmMatch}
+        />
+      )}
     </div>
   );
 };
 
-export default OrderTable;
+export default ViewOrders;
