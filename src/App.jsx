@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './Pages/LandingPage'
 import TransportationLogin from './Pages/Transportation/TransportationLogin'
 import TransportationRegistration from './Pages/Transportation/TransportationRegistration'
 import UserLogin from './Pages/User/UserLogin'
@@ -11,8 +10,10 @@ import WarehouseRegistration from './Pages/Warehouse/WarehouseRegistration';
 import UserDashboard from "./Pages/User/Dashboard/App"
 import WarehouseDashboard from './Pages/Warehouse/Dashboard/App'
 import TransporationDashboard from './Pages/Transportation/Dashboard/App'
+import LandingPage from './Pages/LandingPage/LandingPage';
 
 const App = () => {
+  
   return (
     
     <Router>
