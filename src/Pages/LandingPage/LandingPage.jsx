@@ -79,6 +79,7 @@ const LandingPage = () => {
           </div>
         </div>
       </header>
+      <br /><br />
 
       <div className="container mx-auto px-4">
           <FeatureCard featureCardRef={featureCardRef} />
