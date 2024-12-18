@@ -105,7 +105,7 @@ const UserLogin = ({ onClose }) => {
                         </div>
 
                         <div>
-                          <Link to="/warehousedashboard">
+                          <Link to="/userdashboard">
                             <button 
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-800 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
@@ -130,7 +130,7 @@ const UserLogin = ({ onClose }) => {
 
                         <div className="mt-4">
                             <Link 
-                                to="/warehouseregistration" 
+                                to="/userregistration" 
                                 className="w-full flex justify-center py-2 px-4 border border-green-800 rounded-md shadow-sm text-sm font-medium text-green-800 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
                                 Get SeedStore Now
