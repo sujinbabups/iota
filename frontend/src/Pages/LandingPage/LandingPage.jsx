@@ -1,17 +1,10 @@
 import React, { useState, useRef } from 'react';
-import LoginModal from './LoginModal';
-import SignupModal from './SignupModal';
+// import LoginModal from './LoginModal';
 import Navbar from './Navbar';
 import FeatureCard from './FeatureCard';
 import Footer from './Footer';
-import { 
-    Bars3Icon, 
-    XMarkIcon, 
-    TruckIcon 
-  } from '@heroicons/react/24/outline';
+import { TruckIcon } from '@heroicons/react/24/outline';
 
-  import { LeafIcon, Link } from 'lucide-react';
-import { LiaWarehouseSolid } from "react-icons/lia";
 
 const LandingPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,8 +39,6 @@ const LandingPage = () => {
   return (
     <div className="bg-white min-h-screen">
       <Navbar onGetStartedClick={scrollToFeatureCard} toggleMenu={toggleMenu} openLoginModal={openLoginModal} openSignupModal={openSignupModal} />
-      <LoginModal isOpen={isLoginModalOpen} onClose={closeModals} onSwitchToSignup={openSignupModal} />
-      <SignupModal isOpen={isSignupModalOpen} onClose={closeModals} onSwitchToLogin={openLoginModal} />
       <div className="py-16 bg-white" id="loginSection" >
        
       </div>
