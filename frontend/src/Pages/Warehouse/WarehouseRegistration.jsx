@@ -38,7 +38,6 @@ const WarehouseRegistration = ({ onClose }) => {
         // Log registration attempt (replace with actual registration logic)
         console.log('Registration attempt', { ...formData, password: '[REDACTED]' });
         
-        // Close modal or redirect
         onClose && onClose();
     };
 
