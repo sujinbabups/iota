@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import SeedCard from '../../../Components/User/SeedCard';
-
+import { useNavigate } from 'react-router-dom';
 const seedData = [
   {
     id: 1,
@@ -51,6 +51,38 @@ const seedData = [
 
 
 const SeedList = ({ onAddToCart }) => {
+  
+  const navigate=useNavigate()
+
+  const [data, setData] = useState(null);
+  
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+      const fetchDashboardData = async () => {
+          try {
+              const res = await fetch('/api/userdashboard', {
+                  method: 'GET',
+                  credentials: 'include', 
+              });
+  
+              if (res.status === 401) {
+                  // If unauthorized, redirect to login
+                  navigate('/userlogin');
+              } else if (res.ok) {
+                  const result = await res.json();
+                  setData(result);
+              } else {
+                  throw new Error('Failed to fetch dashboard data');
+              }
+          } catch (err) {
+              console.error(err);
+              setError('An error occurred while fetching the dashboard data.');
+          }
+      };
+  
+      fetchDashboardData();
+  }, [navigate]);
   return (
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>

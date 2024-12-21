@@ -23,9 +23,10 @@ const dummyWarehouseStatus = [
 const COLORS = ['#2ecc71', '#27ae60', '#3498db', '#1abc9c'];
 
 const Home = () => {
+  const navigate = useNavigate();
+
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
   const [inventoryData, setInventoryData] = useState(dummyInventoryData);
   const [warehouseStatus, setWarehouseStatus] = useState(dummyWarehouseStatus);
 
