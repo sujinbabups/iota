@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import wareHouse from '../../modals/warehouse.js'
+import wareHouse from '../../Models/warehouse.js'
 import verifyToken from '../../middleware/routeProtect.js'
 
 const app = express();
@@ -97,5 +97,5 @@ app.get("/warehouse-logout", (req, res) => {
     res.status(200).json({ message: "Logout successful", redirect: "/" });
 });
 
-
 export default app;
+ 
