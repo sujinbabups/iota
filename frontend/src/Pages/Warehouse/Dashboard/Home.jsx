@@ -6,6 +6,7 @@ import {
 import { 
   Package, Leaf, Warehouse, Droplet, Archive, Truck, Filter 
 } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 // Dummy data - in a real application, this would come from an API or database
 const dummyInventoryData = [
@@ -22,8 +23,37 @@ const dummyWarehouseStatus = [
 const COLORS = ['#2ecc71', '#27ae60', '#3498db', '#1abc9c'];
 
 const Home = () => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
   const [inventoryData, setInventoryData] = useState(dummyInventoryData);
   const [warehouseStatus, setWarehouseStatus] = useState(dummyWarehouseStatus);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+        try {
+            const res = await fetch('/api/warehousedashboard', {
+                method: 'GET',
+                credentials: 'include', // Include cookies in the request
+            });
+
+            if (res.status === 401) {
+                // If unauthorized, redirect to login
+                navigate('/warehouselogin');
+            } else if (res.ok) {
+                const result = await res.json();
+                setData(result);
+            } else {
+                throw new Error('Failed to fetch dashboard data');
+            }
+        } catch (err) {
+            console.error(err);
+            setError('An error occurred while fetching the dashboard data.');
+        }
+    };
+
+    fetchDashboardData();
+}, [navigate]);
 
   return (
     <div className="p-4 bg-white ml-[15%] mt-[-15%]">

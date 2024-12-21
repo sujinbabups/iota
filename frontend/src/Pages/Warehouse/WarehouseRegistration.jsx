@@ -25,21 +25,57 @@ const WarehouseRegistration = ({ onClose }) => {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+    
         // Basic validation
         if (formData.password !== formData.confirmPassword) {
             alert("Passwords do not match");
             return;
         }
-
-        // Log registration attempt (replace with actual registration logic)
-        console.log('Registration attempt', { ...formData, password: '[REDACTED]' });
-        
-        onClose && onClose();
+    
+        try {
+            const response = await fetch('/api/warehouse-register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    phoneNumber: formData.phoneNumber,
+                    warehouseName: formData.warehouseName,
+                    address: formData.address,
+                    password: formData.password,
+                    agreeterms: formData.agreeterms,
+                }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                alert('User registered successfully!');
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phoneNumber: '',
+                    warehouseName: '',
+                    address: '',
+                    password: '',
+                    confirmPassword: '',
+                    agreeterms: false,
+                });
+            } else {
+                alert(`Registration failed: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            alert('Something went wrong. Please try again later.');
+        }
     };
+    
 
     return (
         <div className="min-h-screen bg-green-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

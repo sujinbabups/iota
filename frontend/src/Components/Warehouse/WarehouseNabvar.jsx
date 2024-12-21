@@ -1,8 +1,28 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
+
 import { LogOut } from 'lucide-react'
 
 const WarehouseNavbar = () => {
+  const navigate=useNavigate();
+
+  const warehouseLogout = async () => {
+    try {
+        const res = await fetch('/api/warehouse-logout');
+        if (res.ok) {
+            const data = await res.json();
+            if (data.redirect) {
+                navigate(data.redirect); 
+            }
+        } else {
+            console.log('Logout failed.');
+        }
+    } catch (error) {
+        console.log('Something went wrong', error);
+    }
+};
+
+
 
 
   return (
@@ -15,9 +35,8 @@ const WarehouseNavbar = () => {
           Warehouse Management
         </Link>
       </div>
-      <Link to="/">
       <div className="flex items-center">
-        <button 
+        <button onClick={warehouseLogout}
          
           className="flex items-center space-x-2 bg-white text-green-900 px-4 py-2 rounded transition-colors"
         >
@@ -25,7 +44,6 @@ const WarehouseNavbar = () => {
           <span>Logout</span>
         </button>
       </div>
-      </Link>
     </nav>
   )
 }
