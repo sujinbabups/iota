@@ -1,131 +1,169 @@
-import {
-  MDBBtn,
-  MDBCard,
-  MDBCardBody,
-  MDBCardImage,
-  MDBCardText,
-  MDBCol,
-  MDBContainer,
-  MDBIcon,
-  MDBInput,
-  MDBRow,
-  MDBTypography,
-} from "mdb-react-ui-kit";
-import React from "react";
+import React, { useState } from 'react';
 
-export default function QuantityEdit() {
-  return (
-    <section className="h-100 h-custom" style={{ backgroundColor: "#eee" }}>
-      <MDBContainer className="py-5 h-100">
-        <MDBRow className="justify-content-center align-items-center h-100">
-          <MDBCol size="12">
-            <MDBCard className="card-registration card-registration-2" style={{ borderRadius: "15px" }}>
-              <MDBCardBody className="p-0">
-                <MDBRow className="g-0">
-                  {/* Shopping Cart Items Section */}
-                  <MDBCol lg="8">
-                    <div className="p-5">
-                      <div className="d-flex justify-content-between align-items-center mb-5">
-                        <MDBTypography tag="h1" className="fw-bold mb-0 text-black">
-                          Shopping Cart
-                        </MDBTypography>
-                        <MDBTypography className="mb-0 text-muted">3 items</MDBTypography>
-                      </div>
+const CartPage = ({ cartItems: initialCartItems }) => {
+  const [cartItems, setCartItems] = useState(initialCartItems);
 
-                      <hr className="my-4" />
+  const handleQuantityChange = (id, change) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          : item
+      )
+    );
+  };
 
-                      {/* Item 1 */}
-                      <MDBRow className="mb-4 d-flex justify-content-between align-items-center">
-                        <MDBCol md="2" lg="2" xl="2">
-                          <MDBCardImage
-                            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img5.webp"
-                            fluid
-                            className="rounded-3"
-                            alt="Cotton T-shirt"
-                          />
-                        </MDBCol>
-                        <MDBCol md="3" lg="3" xl="3">
-                          <MDBTypography tag="h6" className="text-muted">Shirt</MDBTypography>
-                          <MDBTypography tag="h6" className="text-black mb-0">
-                            Cotton T-shirt
-                          </MDBTypography>
-                        </MDBCol>
-                        <MDBCol md="3" lg="3" xl="3" className="d-flex align-items-center">
-                          <MDBBtn color="link" className="px-2">
-                            <MDBIcon fas icon="minus" />
-                          </MDBBtn>
-                          <MDBInput type="number" min="0" defaultValue={1} size="sm" />
-                          <MDBBtn color="link" className="px-2">
-                            <MDBIcon fas icon="plus" />
-                          </MDBBtn>
-                        </MDBCol>
-                        <MDBCol md="3" lg="2" xl="2" className="text-end">
-                          <MDBTypography tag="h6" className="mb-0">€ 44.00</MDBTypography>
-                        </MDBCol>
-                        <MDBCol md="1" lg="1" xl="1" className="text-end">
-                          <a href="#!" className="text-muted">
-                            <MDBIcon fas icon="times" />
-                          </a>
-                        </MDBCol>
-                      </MDBRow>
-
-                      <hr className="my-4" />
-
-                      {/* Repeat similar structure for additional items */}
-                      {/* Add more items here */}
-
-                      <div className="pt-5">
-                        <MDBTypography tag="h6" className="mb-0">
-                          <MDBCardText tag="a" href="#!" className="text-body">
-                            <MDBIcon fas icon="long-arrow-alt-left me-2" /> Back to shop
-                          </MDBCardText>
-                        </MDBTypography>
-                      </div>
-                    </div>
-                  </MDBCol>
-
-                  {/* Summary Section */}
-                  <MDBCol lg="4" className="bg-grey">
-                    <div className="p-5">
-                      <MDBTypography tag="h3" className="fw-bold mb-5 mt-2 pt-1">Summary</MDBTypography>
-                      <hr className="my-4" />
-
-                      <div className="d-flex justify-content-between mb-4">
-                        <MDBTypography tag="h5" className="text-uppercase">items 3</MDBTypography>
-                        <MDBTypography tag="h5">€ 132.00</MDBTypography>
-                      </div>
-
-                      <MDBTypography tag="h5" className="text-uppercase mb-3">Shipping</MDBTypography>
-                      <div className="mb-4 pb-2">
-                        <select className="select p-2 rounded bg-grey" style={{ width: "100%" }}>
-                          <option value="1">Standard-Delivery- €5.00</option>
-                          <option value="2">Express Delivery - €10.00</option>
-                        </select>
-                      </div>
-
-                      <MDBTypography tag="h5" className="text-uppercase mb-3">Give code</MDBTypography>
-                      <div className="mb-5">
-                        <MDBInput size="lg" label="Enter your code" />
-                      </div>
-
-                      <hr className="my-4" />
-
-                      <div className="d-flex justify-content-between mb-5">
-                        <MDBTypography tag="h5" className="text-uppercase">Total price</MDBTypography>
-                        <MDBTypography tag="h5">€ 137.00</MDBTypography>
-                      </div>
-
-                      <MDBBtn color="dark" block size="lg">
-                        Checkout
-                      </MDBBtn>
-                    </div>
-                  </MDBCol>
-                </MDBRow>
-              </MDBCardBody>
-            </MDBCard>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-    </section>
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
   );
-}
+  const tax = subtotal * 0.1;
+  const total = subtotal + tax;
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleCheckout = async () => {
+    const scriptLoaded = await loadRazorpayScript();
+
+    if (!scriptLoaded) {
+      alert('Razorpay SDK failed to load. Please check your internet connection.');
+      return;
+    }
+
+    // Fetch order details from the backend
+    const orderData = await fetch('http://localhost:5000/create-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ amount: total * 100 }), // Amount in paise
+    }).then((res) => res.json());
+
+    const options = {
+      key: 'your-razorpay-key-id', // Replace with your Razorpay key ID
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: 'My Shop',
+      description: 'Order Payment',
+      order_id: orderData.id,
+      handler: function (response) {
+        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+        // You can update the backend with the payment status here
+      },
+      prefill: {
+        name: 'Your Name',
+        email: 'your-email@example.com',
+        contact: '1234567890',
+      },
+      theme: {
+        color: '#528FF0',
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <h1 className="text-xl font-bold text-gray-900">My Cart</h1>
+            <a href="/" className="text-indigo-600 hover:text-indigo-800">
+              Back to Shop
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <div className="bg-white shadow rounded-lg p-4">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Items in Your Cart
+              </h2>
+              {cartItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between border-b border-gray-200 pb-4 mb-4"
+                >
+                  <div className="flex items-center">
+                    <img
+                      className="h-16 w-16 rounded object-cover"
+                      src={item.image}
+                      alt={item.name}
+                    />
+                    <div className="ml-4">
+                      <h3 className="text-sm font-medium text-gray-900">
+                        {item.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">{item.category}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => handleQuantityChange(item.id, -1)}
+                        className="px-2 py-1 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
+                      >
+                        -
+                      </button>
+                      <span className="px-4">{item.quantity}</span>
+                      <button
+                        onClick={() => handleQuantityChange(item.id, 1)}
+                        className="px-2 py-1 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-900 font-medium mt-2">
+                      ${item.price.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="bg-white shadow rounded-lg p-4">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Order Summary
+              </h2>
+              <div className="flex justify-between text-sm text-gray-900">
+                <p>Subtotal</p>
+                <p>${subtotal.toFixed(2)}</p>
+              </div>
+              <div className="flex justify-between text-sm text-gray-900 mt-2">
+                <p>Tax</p>
+                <p>${tax.toFixed(2)}</p>
+              </div>
+              <div className="flex justify-between text-sm text-gray-900 mt-2 border-t border-gray-200 pt-2">
+                <p className="font-bold">Total</p>
+                <p className="font-bold">${total.toFixed(2)}</p>
+              </div>
+              <button
+                onClick={handleCheckout}
+                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg mt-4 hover:bg-indigo-700"
+              >
+                Proceed to Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default CartPage;

@@ -11,7 +11,7 @@ const Sidebar = () => {
     <div className='border-b-2 border-gray-300 px-5 py-5'>
       <ul className='flex gap-[2%]'>
 
-        <li>
+        {/* <li>
           <Link to="/userdashboard/" className='flex items-center gap-2 '>
             <div>
               <FaHome/>
@@ -20,15 +20,15 @@ const Sidebar = () => {
               Home
             </div>
           </Link>
-        </li>
+        </li> */}
 
         <li>
-          <Link to="/userdashboard/seedlist" className='flex items-center gap-2'>
+          <Link to="/userdashboard/" className='flex items-center gap-2'>
             <div>
-              <FaSeedling/>
+            <FaHome/>
             </div>
             <div>
-              Seed List
+              Home
             </div>
           </Link>
         </li>
