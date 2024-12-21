@@ -1,31 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AddSeed = () => {
   const [formData, setFormData] = useState({
-    seedName: '',
-    price: '',
-    quantity:'',
-    expiryDate: '',
-    farmerName: '',
-    location: '',
-    contact: '',
-    minTemperature: '',
-    maxTemperature: ''
+    seedName: "",
+    seedType: "",
+    seedPrice: "",
+    seedQuantity: "",
+    seedExpiryDate: "",
+    farmerName: "",
+    fLocation: "",
+    seedMinTemperature: "",
+    seedMaxTemperature: "",
   });
+
+  const [seedImage, setSeedImage] = useState(null); // State for image file
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    setSeedImage(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the form data to a backend service
-    console.log('Seed Registration Submitted:', formData);
-    alert('Seed Registration Submitted!');
+
+    const data = new FormData();
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
+    });
+
+    if (seedImage) {
+      data.append("seedImage", seedImage); // Add the image file
+    }
+
+    try {
+      const response = await fetch("/addSeed", {
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Replace with your authentication mechanism
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert("Seed registered successfully!");
+        console.log("Server response:", result);
+      } else {
+        const errorResult = await response.json();
+        console.error("Error:", errorResult);
+        alert("Error registering seed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      alert("A network error occurred. Please try again.");
+    }
   };
 
   return (
@@ -51,6 +86,43 @@ const AddSeed = () => {
           </div>
 
           <div className="mb-4">
+            <label htmlFor="seedType" className="block text-gray-700 font-semibold mb-2">
+              Seed Type
+            </label>
+            <select
+              id="seedType"
+              name="seedType"
+              value={formData.seedType}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value="" disabled>
+                Select seed type
+              </option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="Heirloom">Heirloom</option>
+              <option value="Genetically Modified">Genetically Modified</option>
+              <option value="Cereal">Cereal</option>
+              <option value="Oil">Oil</option>
+              <option value="Vegetable">Vegetable</option>
+              <option value="Fruit">Fruit</option>
+              <option value="Fodder">Fodder</option>
+              <option value="Monocot">Monocot</option>
+              <option value="Dicot">Dicot</option>
+              <option value="Kharif">Kharif</option>
+              <option value="Rabi">Rabi</option>
+              <option value="Zaid">Zaid</option>
+              <option value="Organic">Organic</option>
+              <option value="Treated">Treated</option>
+              <option value="Biofortified">Biofortified</option>
+              <option value="Fast-Germinating">Fast-Germinating</option>
+              <option value="Slow-Germinating">Slow-Germinating</option>
+            </select>
+          </div>
+
+
+          <div className="mb-4">
             <label htmlFor="price" className="block text-gray-700 font-semibold mb-2">
               Price
             </label>
@@ -58,7 +130,7 @@ const AddSeed = () => {
               type="number"
               id="price"
               name="price"
-              value={formData.price}
+              value={formData.seedPrice}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -74,7 +146,7 @@ const AddSeed = () => {
               type="number"
               id="quantity"
               name="quantity"
-              value={formData.quantity}
+              value={formData.seedQuantity}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -82,22 +154,22 @@ const AddSeed = () => {
             />
           </div>
 
-        <div className="mb-4">
-          <label htmlFor="expiryDate" className="block text-gray-700 font-semibold mb-2">
-            Expiry Date
-          </label>
-          <input
-            type="date"
-            id="expiryDate"
-            name="expiryDate"
-            value={formData.expiryDate}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
+          <div className="mb-4">
+            <label htmlFor="expiryDate" className="block text-gray-700 font-semibold mb-2">
+              Expiry Date
+            </label>
+            <input
+              type="date"
+              id="expiryDate"
+              name="expiryDate"
+              value={formData.seedExpiryDate}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
 
-        <div className="mb-4">
+          <div className="mb-4">
             <label htmlFor="seedImage" className="block text-gray-700 font-semibold mb-2">
               Seed Image
             </label>
@@ -109,12 +181,12 @@ const AddSeed = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
-    </div>
+        </div>
 
 
         {/* Farmer Details Section */}
         <div className="grid md:grid-cols-2 gap-4">
-        <h3 className='font-semibold'>Farmer Details</h3> <br />
+          <h3 className='font-semibold'>Farmer Details</h3> <br />
 
           <div className="mb-4">
             <label htmlFor="farmerName" className="block text-gray-700 font-semibold mb-2">
@@ -140,7 +212,7 @@ const AddSeed = () => {
               type="text"
               id="location"
               name="location"
-              value={formData.location}
+              value={formData.fLocation}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -154,10 +226,10 @@ const AddSeed = () => {
             Contact Number
           </label>
           <input
-            type="tel"
+            type="te"
             id="contact"
             name="contact"
-            value={formData.contact}
+            value={formData.fContact}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -176,7 +248,7 @@ const AddSeed = () => {
                 type="number"
                 id="minTemperature"
                 name="minTemperature"
-                value={formData.minTemperature}
+                value={formData.seedMinTemperature}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -195,7 +267,7 @@ const AddSeed = () => {
                 type="number"
                 id="maxTemperature"
                 name="maxTemperature"
-                value={formData.maxTemperature}
+                value={formData.seedMaxTemperature}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -220,4 +292,4 @@ const AddSeed = () => {
   );
 };
 
-export default AddSeed;
+export default AddSeed; 
