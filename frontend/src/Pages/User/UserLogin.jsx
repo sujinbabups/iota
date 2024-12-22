@@ -16,7 +16,6 @@ const UserLogin = ({ onClose }) => {
     return (
         <div className="min-h-screen bg-green-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                {/* Logo Placeholder */}
                 <div className="flex justify-center mb-6">
                 <div className="flex items-center space-x-2 text-center text-3xl font-bold text-green-900">
                   <LeafIcon className="h-8 w-8 text-green-900" />
@@ -27,7 +26,7 @@ const UserLogin = ({ onClose }) => {
 
                 <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10 border border-green-100">
                     <h2 className="text-center text-2xl font-extrabold text-green-800 mb-6">
-                        Login to Your Account
+                        Login to User Account
                     </h2>
 
                     <form className="space-y-6" onSubmit={handleLogin}>
