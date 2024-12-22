@@ -5,9 +5,6 @@ import dotenv from 'dotenv';
 import authWarehouse from './routes/warehouseRoutes/authWarehouse.js';
 import userAuth from './routes/userRoutes/userAuth.js'
 import trAuth from './routes/transporterRoutes/authTransporter.js'
-import cookieParser from 'cookie-parser';
-
-
 import seedRoute from './routes/warehouseRoutes/seedRoutes.js'
 import cookieParser from 'cookie-parser';
 import path from 'path' 
@@ -24,15 +21,20 @@ app.use(express.json());
 app.use('/', authWarehouse);
 app.use('/', userAuth);
 app.use('/',trAuth);
-app.use('/seed', seedRoute);
+app.use('/', seedRoute);
 
 
 
 app.use(
-  cors({ 
-    origin: "http://localhost:5173",
+  cors({
+    origin: 'http://localhost:5173', 
+    methods: 'GET, POST, PUT, DELETE', 
+    allowedHeaders: 'Content-Type,Authorization', 
+    credentials: true, 
   })
 );
+
+
 
 
 mongoose.connect(process.env.MONGO_URI)
