@@ -1,33 +1,70 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { LogIn, Lock, Mail,LeafIcon } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LogIn, Lock, Mail, LeafIcon } from 'lucide-react';
 
 const UserLogin = ({ onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        console.log('Login attempt', { email, password });
-        onClose && onClose();
+    
+        try {
+            const response = await fetch('/api/user-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+    
+            const data = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed');
+            }
+    
+            // Extract token and decode userId from it
+            const { token } = data;
+            const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode token payload
+            const userId = decodedToken.userId;
+    
+            // Store token and userId in localStorage
+            localStorage.setItem('token', token);
+            localStorage.setItem('userId', userId);
+    
+            console.log('Login successful', data);
+            navigate('/userdashboard');
+        } catch (err) {
+            console.error('Login error:', err.message);
+            setError(err.message);
+        }
     };
+    
 
     return (
         <div className="min-h-screen bg-green-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center mb-6">
-                <div className="flex items-center space-x-2 text-center text-3xl font-bold text-green-900">
-                  <LeafIcon className="h-8 w-8 text-green-900" />
-                  <span>SeedStore</span>
-                 </div>
-
+                    <div className="flex items-center space-x-2 text-center text-3xl font-bold text-green-900">
+                        <LeafIcon className="h-8 w-8 text-green-900" />
+                        <span>SeedStore</span>
+                    </div>
                 </div>
 
                 <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10 border border-green-100">
                     <h2 className="text-center text-2xl font-extrabold text-green-800 mb-6">
                         Login to User Account
                     </h2>
+
+                    {error && (
+                        <div className="text-red-500 text-sm mb-4 text-center">
+                            {error}
+                        </div>
+                    )}
 
                     <form className="space-y-6" onSubmit={handleLogin}>
                         <div>
@@ -63,7 +100,7 @@ const UserLogin = ({ onClose }) => {
                                 <input
                                     id="password"
                                     name="password"
-                                    type={showPassword ? "text" : "password"}
+                                    type={showPassword ? 'text' : 'password'}
                                     autoComplete="current-password"
                                     required
                                     value={password}
@@ -83,35 +120,13 @@ const UserLogin = ({ onClose }) => {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                                <input
-                                    id="remember-me"
-                                    name="remember-me"
-                                    type="checkbox"
-                                    className="h-4 w-4 text-green-800 focus:ring-green-500 border-green-300 rounded"
-                                />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-green-900">
-                                    Remember me
-                                </label>
-                            </div>
-
-                            <div className="text-sm">
-                                <a href="#" className="font-medium text-green-800 hover:text-green-500">
-                                    Forgot your password?
-                                </a>
-                            </div>
-                        </div>
-
                         <div>
-                          <Link to="/userdashboard">
-                            <button 
+                            <button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-800 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
                                 <LogIn className="h-5 w-5 mr-2" /> Sign in
                             </button>
-                            </Link>
                         </div>
                     </form>
 
@@ -128,8 +143,8 @@ const UserLogin = ({ onClose }) => {
                         </div>
 
                         <div className="mt-4">
-                            <Link 
-                                to="/userregistration" 
+                            <Link
+                                to="/userregistration"
                                 className="w-full flex justify-center py-2 px-4 border border-green-800 rounded-md shadow-sm text-sm font-medium text-green-800 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
                                 Get SeedStore Now
@@ -140,6 +155,6 @@ const UserLogin = ({ onClose }) => {
             </div>
         </div>
     );
-}
+};
 
 export default UserLogin;

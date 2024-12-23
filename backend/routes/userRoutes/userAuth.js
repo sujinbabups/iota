@@ -46,9 +46,9 @@ app.post('/user-login', async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required' });
         }
 
-        const user = await wareHouse.findOne({ email });
+        const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: 'The warehouse not found' });
+            return res.status(400).json({ message: 'The User not found' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -57,7 +57,7 @@ app.post('/user-login', async (req, res) => {
         }
 
         const token = jwt.sign(
-            { usrId: user._id, username: user.email },
+            { userId: user._id, username: user.email },
             process.env.SECRET_KEY,
             { expiresIn: '1h' }
         );
@@ -70,10 +70,10 @@ app.post('/user-login', async (req, res) => {
     }
 });
 
-app.get('/warehousedashboard', verifyToken, (req, res) => {
+app.get('/userdashboard', verifyToken, (req, res) => {
     res.status(200).json({ 
         success: true,
-        message: 'Welcome to the Warehouse Dashboard', 
+        message: 'Welcome to the User Dashboard', 
         user: req.user 
     });
 });

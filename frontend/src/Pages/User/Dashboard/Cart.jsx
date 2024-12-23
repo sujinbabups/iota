@@ -1,24 +1,6 @@
 import React, { useState } from 'react';
 
 const CartPage = ({ cartItems: initialCartItems }) => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
-
-  const handleQuantityChange = (id, change) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item
-      )
-    );
-  };
-
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const tax = subtotal * 0.1;
-  const total = subtotal + tax;
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -38,17 +20,16 @@ const CartPage = ({ cartItems: initialCartItems }) => {
       return;
     }
 
-    // Fetch order details from the backend
     const orderData = await fetch('http://localhost:5000/create-order', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ amount: total * 100 }), // Amount in paise
+      body: JSON.stringify({ amount: total * 100 }), 
     }).then((res) => res.json());
 
     const options = {
-      key: 'your-razorpay-key-id', // Replace with your Razorpay key ID
+      key: 'your-razorpay-key-id', 
       amount: orderData.amount,
       currency: orderData.currency,
       name: 'My Shop',
@@ -56,7 +37,6 @@ const CartPage = ({ cartItems: initialCartItems }) => {
       order_id: orderData.id,
       handler: function (response) {
         alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
-        // You can update the backend with the payment status here
       },
       prefill: {
         name: 'Your Name',
