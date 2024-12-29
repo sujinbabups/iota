@@ -26,20 +26,24 @@ const SeedList = () => {
   };
 
   const handleDeleteSeed = async (id) => {
-    try {
-      const response = await fetch(`/api/seeds/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete seed');
+    if (window.confirm('Are you sure you want to delete this seed?')) {
+      try {
+        const response = await fetch(`/api/seeds/${id}`, {
+          method: 'DELETE',
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to delete seed');
+        }
+  
+        setSeeds(seeds.filter(seed => seed._id !== id));
+        alert('Seed deleted successfully.');
+      } catch (err) {
+        console.error(err.message);
+        alert('Failed to delete the seed. Please try again.');
       }
-
-      setSeeds(seeds.filter(seed => seed._id !== id));
-      alert('Seed deleted successfully.');
-    } catch (err) {
-      console.error(err.message);
-      alert('Failed to delete the seed. Please try again.');
+    } else {
+      alert('Seed deletion canceled.');
     }
   };
 

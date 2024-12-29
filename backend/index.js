@@ -3,43 +3,54 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authWarehouse from './routes/warehouseRoutes/authWarehouse.js';
-import userAuth from './routes/userRoutes/userAuth.js'
-import trAuth from './routes/transporterRoutes/authTransporter.js'
-import seedRoute from './routes/warehouseRoutes/seedRoutes.js'
+import userAuth from './routes/userRoutes/userAuth.js';
+import trAuth from './routes/transporterRoutes/authTransporter.js';
+import seedRoute from './routes/warehouseRoutes/seedRoutes.js';
 import cookieParser from 'cookie-parser';
-import path from 'path' 
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const app = express();
-app.use(cookieParser());
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Fix __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.use(express.json());
-app.use('/', authWarehouse);
-app.use('/', userAuth);
-app.use('/',trAuth);
-app.use('/', seedRoute);
-
-
-
+// CORS configuration should be before routes
 app.use(
   cors({
-    origin: 'http://localhost:5173', 
-    credentials: true, 
+    origin: 'http://localhost:5173',
+    credentials: true,
   })
 );
 
+// Middleware
+app.use(cookieParser());
+app.use(express.json());
 
+// Static file serving
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Routes
+app.use('/', authWarehouse);
+app.use('/', userAuth);
+app.use('/', trAuth);
+app.use('/', seedRoute);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+// Database connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("Connection failed", err));
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

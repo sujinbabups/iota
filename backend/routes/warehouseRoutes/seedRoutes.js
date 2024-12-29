@@ -23,7 +23,6 @@ router.post('/addSeed', verifyToken, upload.single('seedImage'), async (req, res
     seedPrice,
     seedQuantity,
     seedExpiryDate,
-    seedImage,
     farmerName,
     fLocation,
     fContact,
@@ -69,7 +68,7 @@ router.get('/allseeds', verifyToken, async (req, res) => {
   }
 });
 
-router.put('/api/seeds/:id', upload.single('seedImage'), async (req, res) => {
+router.put('/seeds/:id', upload.single('seedImage'), async (req, res) => {
   const { id } = req.params;
   const updatedData = { ...req.body };
 
@@ -89,7 +88,7 @@ router.put('/api/seeds/:id', upload.single('seedImage'), async (req, res) => {
 });
 
 // Delete seed
-router.delete('/api/seeds/:id', async (req, res) => {
+router.delete('/seeds/:id', async (req, res) => {
   const { id } = req.params;
 
   try {

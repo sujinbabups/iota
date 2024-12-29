@@ -73,17 +73,18 @@ const SeedEditForm = ({ editedSeed, handleInputChange, handleSave, handleCancel,
             </select>
           </div>
 
-      <div className="mb-4">
-        <img
-          src={`http://localhost:5000/uploads/${editedSeed.seedImage}`}
-          onError={(e) => {
-            e.target.src =
-              'https://imgs.search.brave.com/7pvnFHMXv_vlLrZ5u4kNWUZKT7CVutxiVoUa1rtPmD4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5LzAyLzIwLzEy/LzM2MF9GXzkwMjIw/MTI2Ml9zYldESlJG/anRaeDZzdGRIVmgz/RDUyeTUyRDFIU0NS/aC5qcGc';
-          }}
-          alt={editedSeed.seedName || 'Seed Image'}
-          className=" w-[35%] rounded-2xl border-solid aspect-square border-[5px] border-stone-50"
-        />
-      </div>
+          <div className="mb-4">
+            <label htmlFor="seedImage" className="block text-gray-700 font-semibold mb-2">
+              Seed Image
+            </label>
+            <input
+              type="file"
+              id="seedImage"
+              name="seedImage"
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
 
       <div className="space-y-3">
         <div className="flex items-center text-gray-700">
@@ -146,7 +147,7 @@ const SeedEditForm = ({ editedSeed, handleInputChange, handleSave, handleCancel,
           <input
             type="date"
             name="seedExpiryDate"
-            value={editedSeed.seedExpiryDate}
+            value={formatDate(editedSeed.seedExpiryDate)}
             onChange={handleInputChange}
             className="w-full border-b border-green-500 focus:outline-none"
             required

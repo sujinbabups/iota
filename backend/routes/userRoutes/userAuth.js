@@ -70,7 +70,7 @@ app.post('/user-login', async (req, res) => {
     }
 });
 
-app.get('/warehousedashboard', verifyToken, (req, res) => {
+app.get('/userdashboard', verifyToken, (req, res) => {
     res.status(200).json({ 
         success: true,
         message: 'Welcome to the Warehouse Dashboard', 
