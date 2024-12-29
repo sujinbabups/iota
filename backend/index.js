@@ -14,11 +14,9 @@ dotenv.config();
 
 const app = express();
 
-// Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CORS configuration should be before routes
 app.use(
   cors({
     origin: 'http://localhost:5173',
@@ -26,20 +24,16 @@ app.use(
   })
 );
 
-// Middleware
 app.use(cookieParser());
 app.use(express.json());
 
-// Static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
 app.use('/', authWarehouse);
 app.use('/', userAuth);
 app.use('/', trAuth);
 app.use('/', seedRoute);
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
