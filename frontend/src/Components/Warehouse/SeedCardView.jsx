@@ -1,8 +1,8 @@
 import React from 'react'
 import { MapPin,Leaf,DollarSign,Phone,Weight,Thermometer,CalendarDays } from 'lucide-react';
-const SeedCardView = ({onEdit,seed}) => {
+const SeedCardView = ({onEdit,seed,onDelete}) => {
 
-  const formatDate = (isoDate) => {
+  const formatDate = (isoDate,) => {
   const date = new Date(isoDate);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -38,7 +38,7 @@ const SeedCardView = ({onEdit,seed}) => {
           src={`http://localhost:5000/uploads/${seed.seedImage}`}
           onError={(e) => {
             e.target.src =
-              'https://imgs.search.brave.com/7pvnFHMXv_vlLrZ5u4kNWUZKT7CVutxiVoUa1rtPmD4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5LzAyLzIwLzEy/LzM2MF9GXzkwMjIw/MTI2Ml9zYldESlJG/anRaeDZzdGRIVmgz/RDUyeTUyRDFIU0NS/aC5qcGc';
+              '';
           }}
           alt={seed.seedName || 'Seed Image'}
           className="rounded-2xl border-solid aspect-square border-[5px] border-stone-50"

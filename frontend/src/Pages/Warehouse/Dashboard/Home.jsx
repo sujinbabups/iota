@@ -35,7 +35,7 @@ const Home = () => {
         try {
             const res = await fetch('/api/warehousedashboard', {
                 method: 'GET',
-                credentials: 'include', // Include cookies in the request
+                credentials: 'include', 
             });
 
             if (res.status === 401) {

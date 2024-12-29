@@ -12,6 +12,7 @@ const AddSeed = () => {
     fContact: "",
     seedMinTemperature: "",
     seedMaxTemperature: "",
+    seedImage:null
   });
 
   const [seedImage, setSeedImage] = useState(null);
