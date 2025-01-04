@@ -1,6 +1,8 @@
 import express from 'express';
 import verifyToken from '../../middleware/getUserId.js'
 import Cart from '../../Models/cart.js'
+import Order from '../../Models/order.js'
+import Seed from '../../Models/seed.js'
 
 const router = express();
 
@@ -53,16 +55,13 @@ router.get('/getCart', verifyToken, async (req, res) => {
 });
 
 
-router.post('/saveOrder', async (req, res) => {
+router.post('/addsOrder', async (req, res) => {
   try {
     const { userId, items } = req.body;
 
-    // Validate data
     if (!userId || !items || !Array.isArray(items)) {
       return res.status(400).json({ message: 'Invalid data provided' });
     }
-
-    // Create new order
     const newOrder = new Order({ userId, items });
     const savedOrder = await newOrder.save();
 

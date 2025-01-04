@@ -1,30 +1,25 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'User',
-  },
-  items: [
-    {
-      seedId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Seed',
-      },
-      seedName: { type: String, required: true },
-      seedType: { type: String, required: true },
-      seedPrice: { type: Number, required: true },
-      seedQuantity: { type: Number, required: true },
-      availableStock: { type: Number, required: true },
-      currentTemperature: { type: String, required: true },
-    },
-  ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  seedId: { type: mongoose.Schema.Types.ObjectId, ref: 'Seed', required: true },
+  cartId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart', required: true },
+  seedName: { type: String, required: true, trim: true },
+  seedType: { type: String, required: true, trim: true },
+  seedPrice: { type: Number, required: true, min: 0 },
+  seedQuantity: { type: Number, required: true, min: 0 },
+  seedExpiryDate: { type: Date, required: true },
+  seedImage: { type: String, required: false, trim: true },
+  farmerName: { type: String, required: true, trim: true },
+  fLocation: { type: String, required: true, trim: true },
+  fContact: { type: Number, required: true },
+  seedMinTemperature: { type: Number, required: true },
+  seedMaxTemperature: { type: Number, required: true },
+  seedTemperature: { type: Number },
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+
+const Order = mongoose.model('Order', orderSchema);
+
+export default Order;
