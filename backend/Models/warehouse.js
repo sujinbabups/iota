@@ -11,6 +11,6 @@ const userSchema = new mongoose.Schema({
   agreeterms: { type: Boolean, required: true },
 });
 
-const User = mongoose.model("Warehouse", userSchema);
+const Warehouse = mongoose.model("Warehouse", userSchema);
 
-export default User;
+export default Warehouse;

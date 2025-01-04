@@ -1,56 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const CartPage = ({ cartItems: initialCartItems }) => {
+const CartPage = () => {
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/getCart', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  const handleCheckout = async () => {
-    const scriptLoaded = await loadRazorpayScript();
+        if (!response.ok) {
+          throw new Error('Failed to fetch cart items.');
+        }
 
-    if (!scriptLoaded) {
-      alert('Razorpay SDK failed to load. Please check your internet connection.');
-      return;
-    }
-
-    const orderData = await fetch('http://localhost:5000/create-order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ amount: total * 100 }), 
-    }).then((res) => res.json());
-
-    const options = {
-      key: 'your-razorpay-key-id', 
-      amount: orderData.amount,
-      currency: orderData.currency,
-      name: 'My Shop',
-      description: 'Order Payment',
-      order_id: orderData.id,
-      handler: function (response) {
-        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
-      },
-      prefill: {
-        name: 'Your Name',
-        email: 'your-email@example.com',
-        contact: '1234567890',
-      },
-      theme: {
-        color: '#528FF0',
-      },
+        const data = await response.json();
+        setCartItems(data.cartItems.map((item) => ({ ...item, count: 1 })));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
+    fetchCartItems();
+  }, []);
+
+  const handleQuantityChange = (id, change) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item._id === id
+          ? {
+              ...item,
+              count: Math.max(
+                1,
+                Math.min(item.seedQuantity, item.count + change)
+              ),
+            }
+          : item
+      )
+    );
   };
+
+  const handleSaveOrder = async () => {
+    try {
+      const userId = localStorage.getItem('userId'); // Assuming `userId` is stored in localStorage.
+      if (!userId) {
+        alert('User not authenticated. Please log in.');
+        return;
+      }
+
+      const orderData = {
+        userId,
+        items: cartItems.map((item) => ({
+          seedId: item._id,
+          seedName: item.seedName,
+          seedType: item.seedType,
+          seedPrice: item.seedPrice,
+          seedQuantity: item.count,
+          availableStock: item.seedQuantity,
+          currentTemperature: item.seedTemperature,
+        })),
+      };
+
+      const response = await fetch('/api/saveOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save order.');
+      }
+
+      const result = await response.json();
+      alert('Order saved successfully!');
+      console.log('Order saved:', result);
+    } catch (err) {
+      console.error('Error saving order:', err);
+      alert('Failed to save order.');
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.count * item.seedPrice,
+    0
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -74,40 +120,52 @@ const CartPage = ({ cartItems: initialCartItems }) => {
               </h2>
               {cartItems.map((item) => (
                 <div
-                  key={item.id}
+                  key={item._id}
                   className="flex items-center justify-between border-b border-gray-200 pb-4 mb-4"
                 >
                   <div className="flex items-center">
                     <img
-                      className="h-16 w-16 rounded object-cover"
-                      src={item.image}
-                      alt={item.name}
+                      src={`/api/uploads/${item.seedImage}`}
+                      onError={(e) => {
+                        e.target.src =
+                          'https://imgs.search.brave.com/7pvnFHMXv_vlLrZ5u4kNWUZKT7CVutxiVoUa1rtPmD4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5LzAyLzIwLzEy/LzM2MF9GXzkwMjIw/MTI2Ml9zYldESlJG/anRaeDZzdGRIVmgz/RDUyeTUyRDFIU0NS/aC5qcGc';
+                      }}
+                      alt={item.seedName || 'Seed Image'}
+                      className="w-[150px] rounded-2xl border-solid aspect-square border-[5px] border-stone-50"
                     />
                     <div className="ml-4">
-                      <h3 className="text-sm font-medium text-gray-900">
-                        {item.name}
+                      <h3 className="text-2xl font-medium text-gray-900">
+                        {item.seedName}
                       </h3>
-                      <p className="text-sm text-gray-500">{item.category}</p>
+                      <p className="text-sm text-gray-500">{item.seedType}</p>
+                      <div className="text-red-500 mt-6">
+                        Available stocks: {item.seedQuantity}
+                      </div>
+                      <div className="text-green-500">
+                        Current Temperature: {item.seedTemperature}
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center">
                       <button
-                        onClick={() => handleQuantityChange(item.id, -1)}
+                        onClick={() => handleQuantityChange(item._id, -1)}
                         className="px-2 py-1 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
+                        disabled={item.count === 1}
                       >
                         -
                       </button>
-                      <span className="px-4">{item.quantity}</span>
+                      <span className="px-4">{item.count}</span>
                       <button
-                        onClick={() => handleQuantityChange(item.id, 1)}
+                        onClick={() => handleQuantityChange(item._id, 1)}
                         className="px-2 py-1 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
+                        disabled={item.count >= item.seedQuantity}
                       >
                         +
                       </button>
                     </div>
                     <p className="text-sm text-gray-900 font-medium mt-2">
-                      ${item.price.toFixed(2)}
+                      ${item.count * item.seedPrice}
                     </p>
                   </div>
                 </div>
@@ -124,19 +182,11 @@ const CartPage = ({ cartItems: initialCartItems }) => {
                 <p>Subtotal</p>
                 <p>${subtotal.toFixed(2)}</p>
               </div>
-              <div className="flex justify-between text-sm text-gray-900 mt-2">
-                <p>Tax</p>
-                <p>${tax.toFixed(2)}</p>
-              </div>
-              <div className="flex justify-between text-sm text-gray-900 mt-2 border-t border-gray-200 pt-2">
-                <p className="font-bold">Total</p>
-                <p className="font-bold">${total.toFixed(2)}</p>
-              </div>
               <button
-                onClick={handleCheckout}
+                onClick={handleSaveOrder}
                 className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg mt-4 hover:bg-indigo-700"
               >
-                Proceed to Checkout
+                Save Order
               </button>
             </div>
           </div>

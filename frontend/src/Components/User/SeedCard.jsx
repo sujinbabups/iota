@@ -23,49 +23,62 @@ const modalStyle = {
 const SeedCard = ({ seed }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(''); 
+  const [message, setMessage] = useState('');
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleAddToCart = async () => {
     setLoading(true);
-    try {
-      const token = localStorage.getItem('token'); 
-      console.log('Token:', token);
+    setMessage('');
   
-      if (!token) {
-        setMessage('No token found. Please log in again.');
-        setLoading(false);
-        return;
-      }
+    try {
+  
+      const token = localStorage.getItem('token');
+      const cartItem = {
+        seedId: seed._id,
+        seedName: seed.seedName,
+        seedType: seed.seedType,
+        seedPrice: seed.seedPrice,
+        seedQuantity: seed.seedQuantity,
+        seedExpiryDate: seed.seedExpiryDate,
+        seedImage: seed.seedImage,
+        farmerName: seed.farmerName,
+        fLocation: seed.fLocation,
+        fContact: seed.fContact,
+        seedMinTemperature: seed.seedMinTemperature,
+        seedMaxTemperature: seed.seedMaxTemperature,
+        paymentPrice: seed.seedPrice * seed.seedQuantity, 
+        paymentStatus: 'Not Paid',
+      };
   
       const response = await fetch('/api/addCart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          seedId: seed._id,  
-        }),
+        body: JSON.stringify(cartItem),
       });
   
-      const data = await response.json();
-      console.log('Response:', data);
-  
-      if (response.ok) {
-        setMessage(data.message || 'Item added to cart successfully!');
-      } else {
-        setMessage(data.error || 'Failed to add item to cart.');
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 409) {
+          setMessage(errorData.message);
+          return;
+        }
+        throw new Error(errorData.message || 'Failed to add item to cart.');
       }
+  
+      const data = await response.json();
+      setMessage('Item added to cart successfully!');
     } catch (error) {
-      setMessage('Failed to add item to cart.');
-      console.error('Add to Cart Error:', error);
+      setMessage(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
+  
   
 
   return (
@@ -139,6 +152,7 @@ const SeedCard = ({ seed }) => {
           <Typography>Location: {seed.fLocation}</Typography>
           <Typography>Farmer: {seed.farmerName}</Typography>
           <Typography>Contact: {seed.fContact}</Typography>
+          <Typography><span className='text-[green]'>Current Temperature {seed.seedTemperature}</span></Typography>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
             <Button variant="outlined" color="error" onClick={handleClose}>
               Close
