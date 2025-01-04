@@ -48,8 +48,6 @@ const SeedCard = ({ seed }) => {
         fContact: seed.fContact,
         seedMinTemperature: seed.seedMinTemperature,
         seedMaxTemperature: seed.seedMaxTemperature,
-        paymentPrice: seed.seedPrice * seed.seedQuantity, 
-        paymentStatus: 'Not Paid',
       };
   
       const response = await fetch('/api/addCart', {
@@ -72,6 +70,7 @@ const SeedCard = ({ seed }) => {
   
       const data = await response.json();
       setMessage('Item added to cart successfully!');
+      console.log("data",data);
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -79,8 +78,6 @@ const SeedCard = ({ seed }) => {
     }
   };
   
-  
-
   return (
     <>
       <Card sx={{ boxShadow: 'lg', borderRadius: 'md', maxWidth: 300 }}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -8,20 +8,20 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/getCart', {
-          method: 'GET',
+        const token = localStorage.getItem("token");
+        const response = await fetch("/api/getCart", {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch cart items.');
+          throw new Error("Failed to fetch cart items.");
         }
 
         const data = await response.json();
-        setCartItems(data.cartItems.map((item) => ({ ...item, count: 1 })));
+        setCartItems(data.cartItems.map((item) => ({ ...item, count: 0 })));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -39,7 +39,7 @@ const CartPage = () => {
           ? {
               ...item,
               count: Math.max(
-                1,
+                0,
                 Math.min(item.seedQuantity, item.count + change)
               ),
             }
@@ -50,45 +50,61 @@ const CartPage = () => {
 
   const handleSaveOrder = async () => {
     try {
-      const userId = localStorage.getItem('userId'); // Assuming `userId` is stored in localStorage.
-      if (!userId) {
+      const token = localStorage.getItem('token');
+      if (!token) {
         alert('User not authenticated. Please log in.');
         return;
       }
-
-      const orderData = {
-        userId,
-        items: cartItems.map((item) => ({
-          seedId: item._id,
+  
+      const orders = cartItems
+        .filter((item) => item.count > 0) 
+        .map((item) => ({
+          cartId: item._id,
+          seedId: item.seedId._id,
           seedName: item.seedName,
           seedType: item.seedType,
           seedPrice: item.seedPrice,
           seedQuantity: item.count,
-          availableStock: item.seedQuantity,
-          currentTemperature: item.seedTemperature,
-        })),
-      };
-
-      const response = await fetch('/api/saveOrder', {
+          seedExpiryDate: item.seedExpiryDate,
+          seedImage: item.seedImage,
+          seedTemperature: item.seedTemperature,
+          totalPrice: item.count * item.seedPrice,
+        }));
+  
+      if (orders.length === 0) {
+        alert('Please add at least one item to your order.');
+        return;
+      }
+  
+      console.log(orders);
+  
+      const response = await fetch('/api/addOrder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({ orders }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to save order.');
       }
-
+  
       const result = await response.json();
       alert('Order saved successfully!');
       console.log('Order saved:', result);
+  
+      const updatedCartItems = cartItems.filter((item) => item.count === 0);
+      setCartItems(updatedCartItems);
+  
     } catch (err) {
       console.error('Error saving order:', err);
       alert('Failed to save order.');
     }
   };
+  
+  
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -128,9 +144,9 @@ const CartPage = () => {
                       src={`/api/uploads/${item.seedImage}`}
                       onError={(e) => {
                         e.target.src =
-                          'https://imgs.search.brave.com/7pvnFHMXv_vlLrZ5u4kNWUZKT7CVutxiVoUa1rtPmD4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5LzAyLzIwLzEy/LzM2MF9GXzkwMjIw/MTI2Ml9zYldESlJG/anRaeDZzdGRIVmgz/RDUyeTUyRDFIU0NS/aC5qcGc';
+                          "https://imgs.search.brave.com/7pvnFHMXv_vlLrZ5u4kNWUZKT7CVutxiVoUa1rtPmD4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5LzAyLzIwLzEy/LzM2MF9GXzkwMjIw/MTI2Ml9zYldESlJG/anRaeDZzdGRIVmgz/RDUyeTUyRDFIU0NS/aC5qcGc";
                       }}
-                      alt={item.seedName || 'Seed Image'}
+                      alt={item.seedName || "Seed Image"}
                       className="w-[150px] rounded-2xl border-solid aspect-square border-[5px] border-stone-50"
                     />
                     <div className="ml-4">
@@ -138,7 +154,8 @@ const CartPage = () => {
                         {item.seedName}
                       </h3>
                       <p className="text-sm text-gray-500">{item.seedType}</p>
-                      <div className="text-red-500 mt-6">
+                      <div className="mt-6">SeedPrice: {item.seedPrice}</div>
+                      <div className="text-red-500">
                         Available stocks: {item.seedQuantity}
                       </div>
                       <div className="text-green-500">
@@ -151,7 +168,7 @@ const CartPage = () => {
                       <button
                         onClick={() => handleQuantityChange(item._id, -1)}
                         className="px-2 py-1 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300"
-                        disabled={item.count === 1}
+                        disabled={item.count === 0}
                       >
                         -
                       </button>
