@@ -1,5 +1,7 @@
 import React from 'react'
 import { MapPin,Leaf,DollarSign,Phone,Weight,Thermometer,CalendarDays } from 'lucide-react';
+import { FaTemperatureLow } from "react-icons/fa";
+
 const SeedCardView = ({onEdit,seed,onDelete}) => {
 
   const formatDate = (isoDate,) => {
@@ -77,6 +79,10 @@ const SeedCardView = ({onEdit,seed,onDelete}) => {
       <div className="flex items-center text-gray-700">
         <Thermometer className="mr-2 text-green-600 w-5 h-5" />
         <span>Temp Range: {seed.seedMinTemperature}°C - {seed.seedMaxTemperature}°C</span>
+      </div>
+      <div className="flex items-center text-gray-700">
+        <FaTemperatureLow className="mr-2 text-green-600 w-5 h-5" />
+        <span>Current Temperature: {seed.seedMinTemperature+5}°C</span>
       </div>
     </div>
   </>

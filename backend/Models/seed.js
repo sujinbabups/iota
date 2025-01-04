@@ -13,7 +13,9 @@ const seedSchema = new mongoose.Schema({
   seedMinTemperature: { type: Number, required: true },
   seedMaxTemperature: { type: Number, required: true },
   seedTemperature: { type: Number },
-});
+},
+{ timestamps: true }
+);
 
 const Seed = mongoose.model("Seed", seedSchema);
 
