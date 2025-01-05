@@ -2,6 +2,7 @@ import express from 'express';
 import Seed from '../../Models/seed.js';
 import multer from 'multer';
 import verifyToken from '../../middleware/routeProtect.js'
+import Order from '../../Models/order.js'
 
 const router = express.Router();
 
@@ -169,7 +170,7 @@ router.put('/seeds/:id', upload.single('seedImage'), async (req, res) => {
 });
 
 // Delete seed
-router.delete('/seeds/:id', async (req, res) => {
+router.delete('/seeds/:id',verifyToken, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -182,5 +183,59 @@ router.delete('/seeds/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to delete seed', error: err.message });
   }
 });
+
+// View orders
+
+router.get('/getOrder', async (req, res) => {
+  try {
+    const orders = await Order.find(); 
+    res.json({ orderData: orders });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ message: 'Failed to fetch orders' });
+  }
+});
+
+// cancel order
+router.patch("/orders/:orderId/cancel",verifyToken, async (req, res) => {
+  const { orderId } = req.params;
+  const { orderStatus } = req.body;
+
+  try {
+    // Validate orderStatus
+    if (orderStatus !== "Cancelled") {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+
+    // Find the order and update its status
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { orderStatus },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.json({ message: "Order status updated successfully", updatedOrder });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update order status" });
+  }
+});
+
+// Total orders
+
+router.get('/total-orders', async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    res.status(200).json({ totalOrders }); 
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching total orders', error });
+  }
+});
+
+
 
 export default router;
