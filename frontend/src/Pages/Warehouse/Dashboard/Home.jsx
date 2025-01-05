@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaLeaf, FaBoxOpen, FaTruck, FaCheckCircle } from 'react-icons/fa';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   PieChart, Pie, Cell, ResponsiveContainer 
@@ -21,6 +22,7 @@ const Home = () => {
   const [seedTypes, setTypes] = useState([]);
   const [totalSeed,setTotalSeeds]=useState([]);
   const [seedDistribution, setSeedDistribution] = useState([]);
+  const [totalOrders, setTotalOrders] = useState(0);
 
 
 
@@ -92,10 +94,25 @@ const Home = () => {
       }
     };
 
+    const fetchTotalOrders = async () => {
+      try {
+        const response = await fetch('/api/total-orders'); 
+        const data = await response.json(); 
+        console.log("order count", data); 
+        setTotalOrders(data.totalOrders); 
+      } catch (error) {
+        console.error('Error fetching total orders:', error);
+      }
+    };
+    
+    
+
     fetchDashboardData();
     fetchActivities();
     fetchSeedsTypes();
     fetchSeedDistribution();
+    fetchTotalOrders();
+
     
 },[navigate]);
 
@@ -140,37 +157,44 @@ const Home = () => {
 
         {/* Quick Stats */}
         <div className="bg-green-50 shadow-lg rounded-lg p-6 grid grid-cols-2 gap-4">
-          <div className="flex items-center bg-white p-4 rounded border border-green-200">
-            <Package className="mr-3 text-green-600" />
-            <div>
-            <p className="font-bold text-lg">
-              {seedTypes[0]?.value} 
-            </p>
-              <p className="text-sm text-gray-600">Total Seed Types</p>
-            </div>
-          </div>
-          <div className="flex items-center bg-white p-4 rounded border border-green-200">
-            <Droplet className="mr-3 text-green-600" />
-            <div>
-              <p className="font-bold text-lg">1000</p>
-              <p className="text-sm text-gray-600">Processed Seeds</p>
-            </div>
-          </div>
-          <div className="flex items-center bg-white p-4 rounded border border-green-200">
-            <Truck className="mr-3 text-green-600" />
-            <div>
-              <p className="font-bold text-lg">1000</p>
-              <p className="text-sm text-gray-600">Packaged Seeds</p>
-            </div>
-          </div>
-          <div className="flex items-center bg-white p-4 rounded border border-green-200">
-            <Filter className="mr-3 text-green-600" />
-            <div>
-              <p className="font-bold text-lg">1000</p>
-              <p className="text-sm text-gray-600">Pending Sorting</p>
-            </div>
-          </div>
-        </div>
+  {/* Seed Types */}
+  <div className="flex items-center bg-white p-4 rounded border border-green-200">
+    <FaLeaf className="mr-3 text-green-600 text-xl" />
+    <div>
+      <p className="font-bold text-lg">
+        {seedTypes[0]?.value}
+      </p>
+      <p className="text-lg text-gray-600">Seed Types</p>
+    </div>
+  </div>
+
+  {/* Orders */}
+  <div className="flex items-center bg-white p-4 rounded border border-green-200">
+    <FaBoxOpen className="mr-3 text-green-600 text-xl" />
+    <div>
+      <p className="font-bold text-lg">{totalOrders}</p>
+      <p className="text-lg text-gray-600">Orders</p>
+    </div>
+  </div>
+
+  {/* Transporters */}
+  <div className="flex items-center bg-white p-4 rounded border border-green-200">
+    <FaTruck className="mr-3 text-green-600 text-xl" />
+    <div>
+      <p className="font-bold text-lg">10</p>
+      <p className="text-lg text-gray-600">Transporters</p>
+    </div>
+  </div>
+
+  {/* Successful Deliveries */}
+  <div className="flex items-center bg-white p-4 rounded border border-green-200">
+    <FaCheckCircle className="mr-3 text-green-600 text-xl" />
+    <div>
+      <p className="font-bold text-lg">1000</p>
+      <p className="text-lg text-gray-600">Successful Deliveries</p>
+    </div>
+  </div>
+</div>
       </div>
 
       <div className="mt-6 bg-green-50 shadow-lg rounded-lg p-6">
