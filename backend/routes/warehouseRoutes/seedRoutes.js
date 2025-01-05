@@ -91,12 +91,11 @@ router.get('/recentActivities', async (req, res) => {
 
 router.get('/totalSeeds', async (req, res) => {
   try {
-    // Aggregate the total quantity of seeds
     const totalSeeds = await Seed.aggregate([
       {
         $group: {
           _id: null,
-          total: { $sum: "$seedQuantity" }, // Sum the seed quantities
+          total: { $sum: "$seedQuantity" }, 
         },
       },
     ]);
@@ -111,7 +110,6 @@ router.get('/totalSeeds', async (req, res) => {
 
 router.get('/seedDistribution', async (req, res) => {
   try {
-    // Aggregating seed data by type and summing quantities
     const seedDistribution = await Seed.aggregate([
       {
         $group: {

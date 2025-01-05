@@ -70,7 +70,7 @@ const SeedCardView = ({onEdit,seed,onDelete}) => {
       </div>
       <div className="flex items-center text-gray-700">
         <Weight className="mr-2 text-green-600 w-5 h-5" />
-        <span>Quantity: {seed.seedQuantity}kg</span>
+        <span>Quantity: {seed.seedQuantity}</span>
       </div>
       <div className="flex items-center text-gray-700">
         <CalendarDays className="mr-2 text-green-600 w-5 h-5" />
