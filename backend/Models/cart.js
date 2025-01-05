@@ -15,12 +15,6 @@ const cartSchema = new mongoose.Schema({
   seedMinTemperature: { type: Number, required: true },
   seedMaxTemperature: { type: Number, required: true },
   seedTemperature: { type: Number },
-  paymentPrice: { type: Number, min: 0 },
-  paymentStatus: { 
-    type: String, 
-    enum: ['Not Paid', 'Paid'], 
-    default: 'Not Paid',
-  },
 });
 
 const Cart = mongoose.model("Cart", cartSchema);
