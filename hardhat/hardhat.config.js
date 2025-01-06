@@ -15,7 +15,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
       },
     shimmer: {
-      url: "https://json-rpc.evm.testnet.shimmer.network",
+      url: "https://json-rpc.evm.testnet.iotaledger.net",
       accounts: [process.env.PRIVATE_KEY],
     },
   },
