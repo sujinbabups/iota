@@ -84,7 +84,7 @@ const TrackingDetails = () => {
                 })()}
               </p>
             </li>
-            {orderDetails.orderStatus === "In transit" && (
+            {orderDetails.orderStatus === "Out for Delivery" && (
             <>
             <li className="mb-10 ml-6">
               <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
@@ -118,7 +118,7 @@ const TrackingDetails = () => {
             </li>
             </>
             )}
-            {orderDetails.orderStatus === "Delivered" && (
+            {orderDetails.orderStatus === "Out for Delivery" && (
             <>
             <li className="ml-6 mt-10">
             <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">

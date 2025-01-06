@@ -62,7 +62,7 @@ const OrderStatus = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+    <section className="bg-white py-8 antialiased  md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div className="mx-auto max-w-5xl h-[700px]">
           <div className="gap-4 sm:flex sm:items-center sm:justify-between">
@@ -85,6 +85,7 @@ const OrderStatus = () => {
                 >
                   <option value="All orders">All orders</option>
                   <option value="Out for delivery">Out for delivery</option>
+                  <option value="Dispatched">Dispatched</option>
                   <option value="In transit">In transit</option>
                   <option value="Confirmed">Delivered</option>
                   <option value="Cancelled">Cancelled</option>
@@ -92,7 +93,7 @@ const OrderStatus = () => {
               </div>
             </div>
           </div>
-          <div className="mt-6 flow-root sm:mt-8">
+          <div className="mt-6 flow-root sm:mt-8 border-2 p-2 border-gray-700">
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredOrders.map((order) => (
                 <div
@@ -103,45 +104,45 @@ const OrderStatus = () => {
                     <dt className="text-base font-medium text-gray-500 dark:text-gray-400">
                       Seed
                     </dt>
-                    <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <dd className="mt-1.5 text-base font-semibold text-gray-900 ">
                       <a href="#" className="hover:underline">
                         #{order.seedName}
                       </a>
                     </dd>
                   </dl>
                   <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-base font-medium text-gray-500 ">
                       Date:
                     </dt>
-                    <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <dd className="mt-1.5 text-base font-semibold text-gray-900 ">
                       {new Date(order.orderDate).toLocaleDateString()}
                     </dd>
                   </dl>
                   <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-base font-medium text-gray-500 ">
                       Quantity:
                     </dt>
-                    <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <dd className="mt-1.5 text-base font-semibold text-gray-900 ">
                       {order.seedQuantity} nos
                     </dd>
                   </dl>
                   <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-base font-medium text-gray-500 ">
                       Price:
                     </dt>
-                    <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <dd className="mt-1.5 text-base font-semibold text-gray-900 ">
                       ${order.totalPrice}
                     </dd>
                   </dl>
                   <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-base font-medium text-gray-500">
                       Status:
                     </dt>
                     <dd
                       className={`me-2 mt-1.5 inline-flex items-center rounded px-2.5 py-0.5 text-xs font-medium ${
-                        order.orderStatus === "In transit"
+                        order.orderStatus === "Order has placed"
                           ? "bg-yellow-100 text-yellow-800"
-                          : order.orderStatus === "Confirmed"
+                          : order.orderStatus === "Dispatched"
                           ? "bg-green-100 text-green-800"
                           : order.orderStatus === "Out for delivery"
                           ? "bg-blue-100 text-blue-800"

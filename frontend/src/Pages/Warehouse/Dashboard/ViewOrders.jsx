@@ -174,7 +174,7 @@ const ViewOrders = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           orderDetails={selectedOrder}
-          onConfirmMatch={handleConfirmMatch}
+
         />
       )}
       {isTransitModalOpen && (

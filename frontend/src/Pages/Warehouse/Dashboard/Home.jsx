@@ -118,7 +118,7 @@ const Home = () => {
 
 
   return (
-    <div className="p-4 bg-white ml-[15%] mt-[-15%]">
+    <div className="p-4 bg-white ml-[15%] mt-[5%]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
       <div className="bg-green-50 shadow-lg rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center">
