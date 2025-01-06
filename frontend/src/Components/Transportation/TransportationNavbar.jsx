@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate } from 'react-router-dom';
 import { Menu, LogOut } from 'lucide-react';
 import TransportationSidebar from './TransportationSidebar';
 
 const TransportationNavbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate=useNavigate();
+
+    const warehouseLogout = async () => {
+      try {
+          const res = await fetch('/api/warehouse-logout');
+          if (res.ok) {
+              const data = await res.json();
+              if (data.redirect) {
+                  navigate(data.redirect); 
+              }
+          } else {
+              console.log('Logout failed.');
+          }
+      } catch (error) {
+          console.log('Something went wrong', error);
+      }
+  };
 
   // Function to toggle sidebar visibility
   const handleSidebarToggle = () => {
@@ -65,14 +82,14 @@ const TransportationNavbar = () => {
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#A5D6A7] transition-all duration-300 ease-in-out group-hover:w-full"></span>
             Shipments Tracking
           </Link>
-          <Link
-            to="/logout"
+          <button
+            onClick={warehouseLogout}
             className="flex items-center text-white hover:text-[#A5D6A7] transition-all duration-300 ease-in-out py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 relative group"
           >
             <LogOut className="h-6 w-6 mr-2" />
             Logout
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#A5D6A7] transition-all duration-300 ease-in-out group-hover:w-full"></span>
-          </Link>
+          </button>
         </div>
       </div>
 
