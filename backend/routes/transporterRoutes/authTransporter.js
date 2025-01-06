@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Transportation from '../../Models/transportation.js'
 import verifyToken from '../../middleware/routeProtect.js'
+import verifyTransporter from '../../middleware/getTransporter.js'
+import Order from '../../Models/order.js'
 
 const app = express();
 
@@ -84,6 +86,34 @@ app.post('/transportation-login', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+app.get('/transporters', async (req, res) => {
+    try {
+      const transporters = await Transportation.find();
+      res.status(200).json({ transporters });
+    } catch (error) {
+      console.error("Error fetching transporters:", error);
+      res.status(500).json({ message: "Server error. Unable to fetch transporters." });
+    }
+  });
+
+  app.get('/orders',verifyTransporter, async (req, res) => {
+    try {
+      const transporterId = req.user.transporterId;
+  
+      const orders = await Order.find({
+        'transporter.transporterId': transporterId,
+      })
+        .populate('userId', 'fullName email') // Populate related user details if needed
+        .populate('cartId') // Populate related cart details if needed
+        .populate('seedId'); // Populate related seed details if needed
+  
+      res.status(200).json(orders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      res.status(500).json({ message: 'Error fetching orders' });
+    }
+  }); 
 
 app.get('/transportationdashboard', verifyToken, (req, res) => {
     res.status(200).json({ 

@@ -52,7 +52,7 @@ const TransportationNavbar = () => {
             Profile
           </Link>
           <Link
-            to="/orders"
+            to="/transportationdashboard/vieworders"
             className="text-white hover:text-[#A5D6A7] transition-all duration-300 ease-in-out py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 relative group"
           >
             <span className="absolute bottom-0 left-0 w-0 h-1 bg-[#A5D6A7] transition-all duration-300 ease-in-out group-hover:w-full"></span>

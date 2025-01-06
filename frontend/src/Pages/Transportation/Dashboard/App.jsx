@@ -1,9 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from '../../../Components/Transportation/TransportationNavbar';
-// import Sidebar from '../../../Components/Transportation/TransportationSidebar';
 import ViewOrder from './ViewOrder';
-import OrderStatus from './OrderStatus';
 import ShipmentTracking from './ShipmentTracking';
 import Home from './Home';
 import Footer from '../../LandingPage/Footer'
@@ -13,12 +11,10 @@ const App = () => {
     <div >
       <Navbar />
       <div>
-        {/* <Sidebar /> */}
-        <div>
+        <div className='h-[720px]'>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/vieworder" element={<ViewOrder />} />
-            <Route path="/orderstatus" element={<OrderStatus />} />
+            <Route path="/vieworders" element={<ViewOrder />} />
             <Route path="/shipmenttracking" element={<ShipmentTracking />} />
           </Routes>
         </div>
