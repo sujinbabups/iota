@@ -236,6 +236,40 @@ router.get('/total-orders', async (req, res) => {
   }
 });
 
+router.put('/updateOrderStatus/:orderId', verifyToken, async (req, res) => {
+  const { orderId } = req.params;
+  const { transporterId, name, phoneNumber } = req.body;
+
+  if (!transporterId || !name || !phoneNumber) {
+    return res.status(400).json({ message: 'All transporter details are required.' });
+  }
+
+  try {
+    // Update the order with status and transporter details
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        orderStatus: 'Dispatched',
+        transporter: {
+          transporterId,
+          name,
+          phoneNumber,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: 'Order not found.' });
+    }
+
+    res.status(200).json({ message: 'Order updated successfully.', order: updatedOrder });
+  } catch (error) {
+    console.error('Error updating order:', error);
+    res.status(500).json({ message: 'Server error. Unable to update order.' });
+  }
+});
+
 
 
 export default router;

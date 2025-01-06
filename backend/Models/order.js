@@ -18,8 +18,13 @@ const orderSchema = new mongoose.Schema({
   totalPrice: { type: Number, required: true },
   orderStatus: {
     type: String,
-    enum: ['Out for delivery', 'In transit', 'Completed', 'Cancelled', 'Delivered'],
-    default: 'Out for delivery',
+    enum: ['Order has placed','Dispached', 'In transit', 'Out for delivery', 'Cancelled', 'Delivered'],
+    default: 'Order has placed',
+  },
+  transporter: {
+    transporterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Transportation' },
+    name: { type: String },
+    phoneNumber: { type: String },
   },
   orderDate: { type: Date, default: Date.now },
 });

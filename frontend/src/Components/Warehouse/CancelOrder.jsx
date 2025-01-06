@@ -29,8 +29,7 @@ const CancelOrder = ({ isOpen, onClose, orderDetails }) => {
 
   // Find available stock for the current order
   const availableStock =
-  seeds.find((seed) => seed._id === orderDetails.seedId)?.seedQuantity || 0;
-
+    seeds.find((seed) => seed._id === orderDetails.seedId)?.seedQuantity || 0;
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value);
@@ -46,7 +45,7 @@ const CancelOrder = ({ isOpen, onClose, orderDetails }) => {
       if (!orderDetails._id) {
         throw new Error("Order ID is missing");
       }
-  
+
       const response = await fetch(`/api/orders/${orderDetails._id}/cancel`, {
         method: "PATCH",
         headers: {
@@ -54,12 +53,12 @@ const CancelOrder = ({ isOpen, onClose, orderDetails }) => {
         },
         body: JSON.stringify({ orderStatus: "Cancelled" }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to cancel the order");
       }
-  
+
       alert("Order has been cancelled successfully");
       onClose();
     } catch (err) {
@@ -67,11 +66,6 @@ const CancelOrder = ({ isOpen, onClose, orderDetails }) => {
       alert("Error cancelling the order. Please try again.");
     }
   };
-  
-  
-  
- 
-  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -93,18 +87,16 @@ const CancelOrder = ({ isOpen, onClose, orderDetails }) => {
               <p className="font-semibold">Seed: {orderDetails.seedName}</p>
               <p className="font-semibold">
                 Ordered Quantity: {orderDetails.seedQuantity}
-              </p> 
+              </p>
               <p className="font-semibold">Price: {orderDetails.seedPrice}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Available Stock
-              </p>
+              <p className="text-sm text-gray-600">Available Stock</p>
               <p className="font-bold text-green-800"> {availableStock}</p>
               {availableStock !== undefined ? (
                 availableStock < orderDetails.seedQuantity ? (
                   <p className="font-semibold text-red-700">
                     Ordered stock not available
-            
                   </p>
                 ) : (
                   <p className="font-semibold text-green-700">
@@ -128,7 +120,6 @@ const CancelOrder = ({ isOpen, onClose, orderDetails }) => {
                 Number(orderDetails.quantity) || 0,
                 Number(availableStock) || 0
               )}
-              
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
             />
             {matchedQuantity > (availableStock || 0) && (
