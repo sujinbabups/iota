@@ -6,6 +6,7 @@ import OrderStatus from './OrderStatus';
 import ShipmentStatus from './ShipmentStatus';
 import SeedList from './SeedList';
 import Cart from './Cart';
+import ProfilePage from './Profile';
 
 const App = () => {
 
@@ -20,6 +21,7 @@ const App = () => {
             <Route path="/cart" element={<Cart/>}/>
             <Route path="/orderstatus" element={<OrderStatus />} />
             <Route path="/shipmentstatus/:id" element={<ShipmentStatus />} />
+            <Route path="/profileform" element={<ProfilePage />} />            
           </Routes>
         </div>
       </div>

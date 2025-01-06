@@ -4,6 +4,7 @@ import verifyToken from '../../middleware/getUserId.js'
 import Cart from '../../Models/cart.js'
 import Order from '../../Models/order.js'
 import Seed from '../../Models/seed.js'
+import User from '../../Models/user.js'
 
 
 const router = express();
@@ -69,6 +70,11 @@ router.post('/addOrder', verifyToken, async (req, res) => {
       return res.status(400).json({ message: 'Invalid data provided' });
     }
 
+    const user = await User.findById(userId).select("fullName email phoneNumber address");
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     for (const order of orders) {
       if (!mongoose.Types.ObjectId.isValid(order.seedId)) {
         throw new Error(`Invalid seed ID: ${order.seedId}`);
@@ -82,6 +88,10 @@ router.post('/addOrder', verifyToken, async (req, res) => {
     const newOrders = orders.map((order) => ({
       ...order,
       userId,
+      fullName: user.fullName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      address: user.address,
     }));
 
     const savedOrders = await Order.insertMany(newOrders, { session });
@@ -159,10 +169,4 @@ router.get("/getorder/:id", async (req, res) => {
   }
 });
 
-
-
-
-  
-
-  
-  export default router;
+export default router;

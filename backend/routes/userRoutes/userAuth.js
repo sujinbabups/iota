@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import verifyToken from '../../middleware/routeProtect.js'
+import verifyUser from '../../middleware/getUserId.js'
 import User from '../../Models/user.js';
 
 const app = express();
@@ -77,6 +78,55 @@ app.get('/userdashboard', verifyToken, (req, res) => {
         user: req.user 
     });
 });
+
+app.put("/addProfile", verifyUser, async (req, res) => {
+    try {
+      const { userId } = req; 
+      const { fullName, email, phoneNumber, address } = req.body;
+  
+      if (!fullName || !email || !phoneNumber || !address) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+  
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { fullName, email, phoneNumber, address },
+        { new: true, runValidators: true } 
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.status(200).json({
+        message: "Profile updated successfully",
+        user: updatedUser,
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+  
+  app.get("/getProfile", verifyUser, async (req, res) => {
+    try {
+      const { userId } = req; 
+  
+      const user = await User.findById(userId).select("-password"); 
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.status(200).json({
+        message: "Profile retrieved successfully",
+        user,
+      });
+    } catch (error) {
+      console.error("Error fetching profile:", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }); 
 
 app.get("/warehouse-logout", (req, res) => {
     res.clearCookie("AuthToken");

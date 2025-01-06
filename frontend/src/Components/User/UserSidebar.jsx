@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
-import { FaSeedling } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 import { FaCartShopping } from "react-icons/fa6";
 import { MdBorderColor } from "react-icons/md";
 import { MdOutlineLocalShipping } from "react-icons/md";
@@ -34,6 +34,17 @@ const Sidebar = () => {
         </li>
 
         <li>
+          <Link to="/userdashboard/profileform" className='flex items-center gap-2'>
+            <div>
+              <CgProfile/>
+            </div>
+            <div>
+              Profile
+            </div>
+          </Link>
+        </li>
+
+        <li>
           <Link to="/userdashboard/cart" className='flex items-center gap-2'>
             <div>
               <FaCartShopping/>
@@ -55,16 +66,6 @@ const Sidebar = () => {
           </Link>
         </li>
 
-        {/* <li>
-          <Link to="/userdashboard/shipmentstatus" className='flex items-center gap-2'>
-            <div>
-              <MdOutlineLocalShipping/>
-            </div>
-            <div>
-              Shipment Status
-            </div>
-          </Link>
-        </li> */}
       </ul>
     </div>
   );
