@@ -6,7 +6,7 @@ const OrderStatus = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("All orders"); // State for selected filter
+  const [filter, setFilter] = useState("All orders"); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const OrderStatus = () => {
 
         const data = await response.json();
         setOrders(data.orderData);
-        setFilteredOrders(data.orderData); // Initialize filtered orders
+        setFilteredOrders(data.orderData); 
       } catch (err) {
         setError(err.message);
       } finally {
@@ -43,14 +43,12 @@ const OrderStatus = () => {
     fetchOrders();
   }, []);
 
-  // Function to handle filter changes
   const handleFilterChange = (event) => {
     const selectedFilter = event.target.value;
     setFilter(selectedFilter);
 
-    // Apply the filter
     if (selectedFilter === "All orders") {
-      setFilteredOrders(orders); // Show all orders
+      setFilteredOrders(orders); 
     } else {
       const filtered = orders.filter(
         (order) =>
@@ -66,7 +64,7 @@ const OrderStatus = () => {
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-5xl h-[700px]">
           <div className="gap-4 sm:flex sm:items-center sm:justify-between">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
               My Orders

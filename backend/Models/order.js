@@ -15,8 +15,8 @@ const orderSchema = new mongoose.Schema({
   totalPrice: { type: Number, required: true }, 
   orderStatus: {
     type: String,
-    enum: ['Out for delivery', 'In transit', 'Completed', 'Cancelled'],
-    default: 'Out For Delivery',
+    enum: ['Out for delivery', 'In transit', 'Completed', 'Cancelled','Delivered'],
+    default: 'Out for delivery',
   },
   orderDate: { type: Date, default: Date.now },
 });
