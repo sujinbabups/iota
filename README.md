@@ -2,6 +2,7 @@
 
 Seedstore is a modern application designed to streamline the process of managing and distributing seeds for agriculture and gardening. With Seedstore, users can browse, purchase, and manage a variety of seeds while ensuring a smooth and efficient user experience.
 
+
 ## Features
 
 - **Seed Catalog**: View and explore a wide range of seeds.
@@ -9,14 +10,12 @@ Seedstore is a modern application designed to streamline the process of managing
 - **User Accounts**: Register and manage your profile.
 - **Secure Payments**: Buy seeds with secure and reliable payment options.
 - **Order Tracking**: Keep track of your seed orders in real-time.
+- **Distributed Technology**: Monitor and store seed temperature data using IOTA for both warehouse and transportation.
 
 ## 🛠 Built With
 
 <div align="left">
-<a href="https://nodejs.org/en/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/Kerala-Blockchain-Academy/MediaVault/f822abfb1ca9f89c703822049ea417256798e1d5/assets/nodejs-colored.svg" width="36" height="36" alt="NodeJS" /></a>
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/Kerala-Blockchain-Academy/MediaVault/f822abfb1ca9f89c703822049ea417256798e1d5/assets/javascript-colored.svg" width="36" height="36" alt="JavaScript" /></a>
-<a href="https://react.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/Kerala-Blockchain-Academy/MediaVault/f822abfb1ca9f89c703822049ea417256798e1d5/assets/react-colored.svg" width="36" height="36" alt="ReactJs" /></a>
-<a href="https://ethereum.org/en/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/Kerala-Blockchain-Academy/MediaVault/f822abfb1ca9f89c703822049ea417256798e1d5/assets/ethereum-colored.svg" width="36" height="36" alt="Ethereum" /></a>
+ <img src="https://skillicons.dev/icons?i=vscode,react,tailwind,nodejs,solidity,hardhat"/>
 </div>
 
 ## Prerequisites
@@ -30,7 +29,7 @@ Clone the Project and change into the directory
 
 ```bash
 git clone https://github.com/sujinbabups/iota.git
-cd seedstore
+cd iota
 ```
 
 Install dependencies
@@ -55,13 +54,15 @@ Run the application
 #### Backend:
 
 ```bash
-npm run dev:backend
+cd backend
+npm run dev
 ```
 
 #### Frontend:
 
 ```bash
-npm run dev:frontend
+cd frontend
+npm run dev
 ```
 
 The application should now be running at `http://localhost:5173`.
@@ -71,13 +72,6 @@ The application should now be running at `http://localhost:5173`.
 ## 🎞️ Demo
 
 [Demo]
-## 📦 Planned Updates
-
-- MetaMask Compatibility
-- UI Updates
-- Mobile View
-- Production Release
-- Desktop App
 
 ## 🎗️ Contributing
 
