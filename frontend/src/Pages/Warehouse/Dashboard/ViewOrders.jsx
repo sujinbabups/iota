@@ -59,7 +59,7 @@ const ViewOrders = () => {
                 <th className="px-4 py-2 border border-green-300">Order ID</th>
                 <th className="px-4 py-2 border border-green-300">Seed</th>
                 <th className="px-4 py-2 border border-green-300">Quantity</th>
-                <th className="px-4 py-2 border border-green-300">Order Status</th>
+                <th className="px-6 py-2 border border-green-300">Order Status</th>
                 <th className="px-4 py-2 border border-green-300">Actions</th>
               </tr>
             </thead>
