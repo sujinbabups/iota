@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapPin,Leaf,DollarSign,Phone,Weight,Thermometer,CalendarDays } from 'lucide-react';
 import { FaTemperatureLow } from "react-icons/fa";
-
+import { ethers } from "ethers";
+import Address from '../../scdata/deployed_addresses.json';
+import ABI from '../../scdata/abi.json'
 const SeedCardView = ({onEdit,seed,onDelete}) => {
 
   const formatDate = (isoDate,) => {
@@ -11,9 +13,76 @@ const SeedCardView = ({onEdit,seed,onDelete}) => {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
+const contractAddress=Address.TempModuleIoTTemperatureStorage;
+const contractABI=ABI.abi;
+
+const [signer, setSigner] = useState(null);
+const [provider, setProvider] = useState(null);
+
+async function connectToMetamask() {
+  if (typeof window.ethereum !== "undefined") {
+    try {
+      // Request account access
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      // Create a new BrowserProvider instance (ethers 6.x)
+      const provider = new ethers.BrowserProvider(window.ethereum);
+
+      // Get the connected account
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress(); // Ensure we use this method correctly in ethers v6.x
+
+      console.log("Connected account:", address);
+      return { provider, signer };
+    } catch (error) {
+      console.error("Connection to Metamask failed:", error);
+      return { provider: null, signer: null }; // Return nulls if there is an error
+    }
+  } else {
+    console.error("No Ethereum browser extension detected!");
+    return { provider: null, signer: null };
+  }
+}
+
+useEffect(() => {
+  connectToMetamask(); 
+}, []);
+
+
+async function storeTemperatureWithBrowserProvider(currentTemperature) {
+  const { provider, signer } = await connectToMetamask();
+
+  if (provider && signer) {
+    try {
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+      // Send the transaction
+      const tx = await contract.storeTemperature(currentTemperature + 5);
+      console.log("Transaction submitted:", tx.hash);
+
+      // Wait for confirmation
+      const receipt = await tx.wait();
+      console.log("Transaction confirmed:", receipt);
+    } catch (error) {
+      console.error("Error sending transaction:", error);
+    }
+  } else {
+    console.error("Signer or provider is not available");
+  }
+}
+
+
+
+const handleStoreTemperature = () => {
+  const currentTemperature = seed.seedMinTemperature; // Fetch the actual current temperature
+  storeTemperatureWithBrowserProvider(currentTemperature);
+};
+
+
 
     
   return (
+    
     
     <>
     
@@ -81,9 +150,15 @@ const SeedCardView = ({onEdit,seed,onDelete}) => {
         <span>Temp Range: {seed.seedMinTemperature}°C - {seed.seedMaxTemperature}°C</span>
       </div>
       <div className="flex items-center text-gray-700">
-        <FaTemperatureLow className="mr-2 text-green-600 w-5 h-5" />
-        <span>Current Temperature: {seed.seedMinTemperature+5}°C</span>
-      </div>
+          <FaTemperatureLow className="mr-2 text-green-600 w-5 h-5" />
+          <span>Current Temperature: {seed.seedMinTemperature + 5}°C</span>
+          <button
+            onClick={handleStoreTemperature}
+            className="ml-2 px-3 py-1 bg-green-500 text-white rounded"
+          >
+            Store Temperature
+          </button>
+        </div>
     </div>
   </>
   )
