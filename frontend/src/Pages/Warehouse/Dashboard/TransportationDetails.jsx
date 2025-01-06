@@ -71,7 +71,7 @@ const TransporterDetails = () => {
     <div className="p-4 bg-white">
             {/* <h1 className='text-3xl font-bold text-center mb-8 text-green-80'>TransportationDetails</h1> */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ml-[15%] mt-[-13%]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ml-[15%] mt-[7%]">
         {/* Transporters List */}
         <div className="md:col-span-1 bg-green-50 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center">

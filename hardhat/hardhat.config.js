@@ -5,7 +5,7 @@ require('dotenv').config();
 
 module.exports = {
    
-  defaultNetwork:"shimmer",
+  defaultNetwork:"iota",
   networks:{
     localhost:{
       url:"http://127.0.0.1:8545/"
@@ -14,7 +14,7 @@ module.exports = {
       url:process.env.INFURA_URL,
       accounts: [process.env.PRIVATE_KEY],
       },
-    shimmer: {
+    iota: {
       url: "https://json-rpc.evm.testnet.iotaledger.net",
       accounts: [process.env.PRIVATE_KEY],
     },

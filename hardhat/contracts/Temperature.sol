@@ -2,6 +2,16 @@
 pragma solidity ^0.8.0;
 
 contract IoTTemperatureStorage {
+    // Struct to store seed data
+    struct Seed {
+        string seedId;
+        string seedName;
+        int256 currentTemperature;
+    }
+
+    // Mapping to store seed data based on seedId
+    mapping(string => Seed) public seeds;
+
     // Struct to store temperature data
     struct TemperatureRecord {
         uint256 timestamp;
@@ -15,27 +25,31 @@ contract IoTTemperatureStorage {
     mapping(address => uint256) public recordsCount;
 
     // Event emitted when a temperature is stored
-    event TemperatureStored(address indexed device, int256 temperature, uint256 timestamp);
+    event TemperatureStored(string indexed seedId, int256 temperature, uint256 timestamp);
 
     /**
      * @dev Store temperature data from an IoT device
-     * @param _temperature The temperature reading from the device
+     * @param seedId The unique identifier of the seed
+     * @param currentTemperature The temperature reading from the device
      */
-    function storeTemperature(int256 _temperature) external {
-        // Create a new temperature record
-        TemperatureRecord memory newRecord = TemperatureRecord({
+    function storeTemperature(string memory seedId, int256 currentTemperature) public {
+        require(currentTemperature >= -273, "Temperature must be above absolute zero");
+
+        // Check if seed exists
+        Seed storage seed = seeds[seedId];
+        require(bytes(seed.seedName).length != 0, "Seed not found");
+
+        // Store the temperature
+        seed.currentTemperature = currentTemperature;
+
+        // Add the record to the temperature records array
+        temperatureRecords.push(TemperatureRecord({
             timestamp: block.timestamp,
-            temperature: _temperature
-        });
+            temperature: currentTemperature
+        }));
 
-        // Store the record in the array
-        temperatureRecords.push(newRecord);
-
-        // Increment the record count for the sender (IoT device)
-        recordsCount[msg.sender] += 1;
-
-        // Emit an event
-        emit TemperatureStored(msg.sender, _temperature, block.timestamp);
+        // Emit the event with the seedId, current temperature, and timestamp
+        emit TemperatureStored(seedId, currentTemperature, block.timestamp);
     }
 
     /**
@@ -65,5 +79,20 @@ contract IoTTemperatureStorage {
      */
     function getTotalRecords() external view returns (uint256 count) {
         return temperatureRecords.length;
+    }
+
+    /**
+     * @dev Add a new seed to the contract
+     * @param seedId The unique identifier of the seed
+     * @param seedName The name of the seed
+     */
+    function addSeed(string memory seedId, string memory seedName) public {
+        require(bytes(seeds[seedId].seedName).length == 0, "Seed already exists");
+
+        seeds[seedId] = Seed({
+            seedId: seedId,
+            seedName: seedName,
+            currentTemperature: 0 // Default temperature
+        });
     }
 }

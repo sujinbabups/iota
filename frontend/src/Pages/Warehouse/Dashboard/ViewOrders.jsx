@@ -79,7 +79,7 @@ const ViewOrders = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white rounded-md shadow-lg mt-[-12%]">
+    <div className="w-[900px] mx-auto p-6 bg-white rounded-md shadow-lg mt-[5%] ml-[15%]">
       <h2 className="text-2xl font-bold text-center text-green-800 mb-6">
         All Orders
       </h2>

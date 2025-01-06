@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
@@ -6,7 +7,8 @@ import Button from '@mui/joy/Button';
 import AspectRatio from '@mui/joy/AspectRatio';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-
+import Address from '../../scdata/deployed_addresses.json';
+import ABI from '../../scdata/abi.json';
 
 const modalStyle = {
   position: 'absolute',
@@ -24,16 +26,65 @@ const SeedCard = ({ seed }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [seedTemperature, setSeedTemperature] = useState(null); // State for current temperature
+
+  const contractAddress = Address.TempModuleIoTTemperatureStorage;
+  const contractABI = ABI.abi;
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  // Function to fetch the stored temperature from the blockchain
+  const fetchTemperatureFromBlockchain = async () => {
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      const [temperature] = await contract.getLatestTemperature(); // Fetching the latest temperature and timestamp
+      setSeedTemperature(temperature.toString()); // Update the state with fetched temperature
+    } catch (error) {
+      console.error("Error fetching temperature:", error);
+      setSeedTemperature('Error fetching temperature');
+    }
+  };
+  async function connectToMetamask() {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        // Request account access
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+  
+        // Create a new BrowserProvider instance (ethers 6.x)
+        const provider = new ethers.BrowserProvider(window.ethereum);
+  
+        // Get the connected account
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress(); // Ensure we use this method correctly in ethers v6.x
+  
+        console.log("Connected account:", address);
+        return { provider, signer };
+      } catch (error) {
+        console.error("Connection to Metamask failed:", error);
+        return { provider: null, signer: null }; // Return nulls if there is an error
+      }
+    } else {
+      console.error("No Ethereum browser extension detected!");
+      return { provider: null, signer: null };
+    }
+  }
+
+  // Fetch the temperature when the modal opens
+  useEffect(() => {
+    if (open) {
+      connectToMetamask();
+      fetchTemperatureFromBlockchain();
+    }
+  }, [open]);
+
   const handleAddToCart = async () => {
     setLoading(true);
     setMessage('');
-  
+
     try {
-  
       const token = localStorage.getItem('token');
       const cartItem = {
         seedId: seed._id,
@@ -49,7 +100,7 @@ const SeedCard = ({ seed }) => {
         seedMinTemperature: seed.seedMinTemperature,
         seedMaxTemperature: seed.seedMaxTemperature,
       };
-  
+
       const response = await fetch('/api/addCart', {
         method: 'POST',
         headers: {
@@ -58,7 +109,7 @@ const SeedCard = ({ seed }) => {
         },
         body: JSON.stringify(cartItem),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 409) {
@@ -67,17 +118,17 @@ const SeedCard = ({ seed }) => {
         }
         throw new Error(errorData.message || 'Failed to add item to cart.');
       }
-  
+
       const data = await response.json();
       setMessage('Item added to cart successfully!');
-      console.log("data",data);
+      console.log("data", data);
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <>
       <Card sx={{ boxShadow: 'lg', borderRadius: 'md', maxWidth: 300 }}>
@@ -149,7 +200,9 @@ const SeedCard = ({ seed }) => {
           <Typography>Location: {seed.fLocation}</Typography>
           <Typography>Farmer: {seed.farmerName}</Typography>
           <Typography>Contact: {seed.fContact}</Typography>
-          <Typography><span className='text-[green]'>Current Temperature {seed.seedTemperature}</span></Typography>
+          <Typography>
+            <span className='text-[green]'>Current Temperature: {seedTemperature ? `${seedTemperature}°C` : 'Fetching...'}</span>
+          </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
             <Button variant="outlined" color="error" onClick={handleClose}>
               Close
