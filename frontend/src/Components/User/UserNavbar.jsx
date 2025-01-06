@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const UserNavbar = () => {
 
@@ -9,7 +10,9 @@ const UserNavbar = () => {
           IOTA
         </div>
         <div className='flex gap-5'>
-          <div><img src='' alt='profile'/></div>
+          <Link to='/userdashboard/profileform'>
+            <img src='' alt='profile'/>
+          </Link>
           <div>username</div> 
         </div>
       </div>
