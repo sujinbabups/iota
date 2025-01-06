@@ -1,33 +1,67 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { LogIn, Lock, Mail,LeafIcon } from 'lucide-react';
+import { Link, Navigate } from 'react-router-dom';
+import { LogIn, Lock, Mail, LeafIcon } from 'lucide-react';
 
 const TransportationLogin = ({ onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [redirectToDashboard, setRedirectToDashboard] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         console.log('Login attempt', { email, password });
-        onClose && onClose();
+
+        try {
+            const response = await fetch('/api/transportation-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Login failed');
+            }
+
+            const data = await response.json();
+            console.log('Login successful', data);
+
+            // Assuming the backend returns a token or user data
+            // You can store this data in localStorage, state, or use it in your app
+            localStorage.setItem('authToken', data.token);
+
+            // Set the state to trigger the redirect
+            setRedirectToDashboard(true);
+
+            // Close the login modal if onClose is passed
+            onClose && onClose();
+        } catch (error) {
+            console.error('Error logging in:', error);
+            alert('Login failed. Please try again.');
+        }
     };
+
+    // Redirect to the transportation dashboard after a successful login
+    if (redirectToDashboard) {
+        return <Navigate to="/transportationdashboard" />;
+    }
 
     return (
         <div className="min-h-screen bg-green-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 {/* Logo Placeholder */}
                 <div className="flex justify-center mb-6">
-                <div className="flex items-center space-x-2 text-center text-3xl font-bold text-green-900">
-                  <LeafIcon className="h-8 w-8 text-green-900" />
-                  <span>SeedStore</span>
-                 </div>
-
+                    <div className="flex items-center space-x-2 text-center text-3xl font-bold text-green-900">
+                        <LeafIcon className="h-8 w-8 text-green-900" />
+                        <span>SeedStore</span>
+                    </div>
                 </div>
 
                 <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10 border border-green-100">
                     <h2 className="text-center text-2xl font-extrabold text-green-800 mb-6">
-                        Login to Your Account
+                        Login to Your<br /> Transportation Account
                     </h2>
 
                     <form className="space-y-6" onSubmit={handleLogin}>
@@ -105,14 +139,12 @@ const TransportationLogin = ({ onClose }) => {
                         </div>
 
                         <div>
-                          <Link to="/transporationdashboard">
-                            <button 
+                            <button
                                 type="submit"
                                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-800 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
                                 <LogIn className="h-5 w-5 mr-2" /> Sign in
                             </button>
-                            </Link>
                         </div>
                     </form>
 
@@ -129,11 +161,11 @@ const TransportationLogin = ({ onClose }) => {
                         </div>
 
                         <div className="mt-4">
-                            <Link 
-                                to="/transportationregistration" 
+                            <Link
+                                to="/transportationregistration"
                                 className="w-full flex justify-center py-2 px-4 border border-green-800 rounded-md shadow-sm text-sm font-medium text-green-800 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
-                                Get SeedStore Now
+                                Get SeedStore Transportation Account Now
                             </Link>
                         </div>
                     </div>
@@ -141,6 +173,6 @@ const TransportationLogin = ({ onClose }) => {
             </div>
         </div>
     );
-}
+};
 
 export default TransportationLogin;
