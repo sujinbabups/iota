@@ -8,7 +8,7 @@ import { MdOutlineLocalShipping } from "react-icons/md";
 
 const Sidebar = () => {
   return (
-    <div className='border-b-2 border-gray-300 px-5 py-5'>
+    <div className='border-b-2 -mt-2 border-gray-300 px-5 py-5 bg-green-700 text-white'>
       <ul className='flex gap-[2%]'>
 
         {/* <li>
