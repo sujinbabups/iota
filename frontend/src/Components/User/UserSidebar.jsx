@@ -50,12 +50,12 @@ const Sidebar = () => {
               <MdBorderColor/>
             </div>
             <div>
-              Order Status
+              My Orders
             </div> 
           </Link>
         </li>
 
-        <li>
+        {/* <li>
           <Link to="/userdashboard/shipmentstatus" className='flex items-center gap-2'>
             <div>
               <MdOutlineLocalShipping/>
@@ -64,7 +64,7 @@ const Sidebar = () => {
               Shipment Status
             </div>
           </Link>
-        </li>
+        </li> */}
       </ul>
     </div>
   );
