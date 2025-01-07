@@ -13,7 +13,7 @@ Seedstore is a modern application designed to streamline the process of managing
 - **Distributed Technology**: Monitor and store seed temperature data using IOTA for both warehouse and transportation.
 
 ## 🎞️ Demo
-<a href="https://youtu.be/KgYy_Krbf4E?feature=shared">
+<a href="https://youtu.be/RvcglNP2BZk?si=cT5QFc8TE_JRhBBM">
  <img align="center" alt="my dapp" src="https://imgs.search.brave.com/1j1ghktwVDKmbgTpv6VdCY2oWfLmpjKzvj-R4VQqx5M/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9oaXBz/LmhlYXJzdGFwcHMu/Y29tL2htZy1wcm9k/L2ltYWdlcy9iZXN0/LXBsYWNlcy10by1i/dXktc2VlZHMtcGFy/ay1zZWVkLTE2NTE2/OTk0MDAuanBnP2Ny/b3A9MC42Mjl4dzox/LjAweGg7MC4yNTB4/dywwJnJlc2l6ZT05/ODA6Kg" width="300" height="250" /><br>
     </a>
     
