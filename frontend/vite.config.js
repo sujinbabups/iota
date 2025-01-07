@@ -1,17 +1,18 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
+// Load environment variables from .env files
+const backendUrl = process.env.VITE_API_URL;
+
 export default defineConfig({
   plugins: [react()],
-  server:{
-    proxy:{
+  server: {
+    proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: backendUrl, 
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-
-    }
-  }
-})
+    },
+  },
+});

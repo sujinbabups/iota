@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, Warehouse, Phone, Building2, MapPin,LeafIcon } from 'lucide-react';
 
 const WarehouseRegistration = ({ onClose }) => {
@@ -17,7 +17,7 @@ const WarehouseRegistration = ({ onClose }) => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+    const navigate=useNavigate();
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prevState => ({
@@ -67,6 +67,7 @@ const WarehouseRegistration = ({ onClose }) => {
                     confirmPassword: '',
                     agreeterms: false,
                 });
+            navigate("/warehouselogin")
             } else {
                 alert(`Registration failed: ${data.message}`);
             }

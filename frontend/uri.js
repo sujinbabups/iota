@@ -1,1 +1,1 @@
-export const baseUri=`https://iota-iota.vercel.app/`;
+export const baseUri=`https://iota-iota.vercel.app/`
