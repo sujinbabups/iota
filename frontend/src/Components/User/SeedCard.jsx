@@ -26,7 +26,9 @@ const SeedCard = ({ seed }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [seedTemperature, setSeedTemperature] = useState(null); // State for current temperature
+  const [seedTemperature, setSeedTemperature] = useState(null); 
+  const [contract, setContract] = useState(null);
+  const [error, setError] = useState('');
 
   const contractAddress = Address.TempModuleIoTTemperatureStorage;
   const contractABI = ABI.abi;
@@ -35,51 +37,96 @@ const SeedCard = ({ seed }) => {
   const handleClose = () => setOpen(false);
 
   // Function to fetch the stored temperature from the blockchain
-  const fetchTemperatureFromBlockchain = async () => {
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      const [temperature] = await contract.getLatestTemperature(); // Fetching the latest temperature and timestamp
-      setSeedTemperature(temperature.toString()); // Update the state with fetched temperature
-    } catch (error) {
-      console.error("Error fetching temperature:", error);
-      setSeedTemperature('Error fetching temperature');
-    }
+  const getBlockchainSeedId = (dbSeedId) => {
+    return `seed_${dbSeedId.replace(/[^a-zA-Z0-9]/g, '')}`;
   };
-  async function connectToMetamask() {
+  // const fetchTemperatureFromBlockchain = async () => {
+  //   try {
+  //     const provider = new ethers.BrowserProvider(window.ethereum);
+  //     const signer = await provider.getSigner();
+  //     const contract = new ethers.Contract(contractAddress, contractABI, signer);
+  //     const [temperature] = await contract.getLatestTemperature(); // Fetching the latest temperature and timestamp
+  //     setSeedTemperature(temperature.toString()); // Update the state with fetched temperature
+  //   } catch (error) {
+  //     console.error("Error fetching temperature:", error);
+  //     setSeedTemperature('Error fetching temperature');
+  //   }
+  // };
+  const connectToMetamask = async () => {
     if (typeof window.ethereum !== "undefined") {
       try {
-        // Request account access
         await window.ethereum.request({ method: "eth_requestAccounts" });
-  
-        // Create a new BrowserProvider instance (ethers 6.x)
         const provider = new ethers.BrowserProvider(window.ethereum);
-  
-        // Get the connected account
         const signer = await provider.getSigner();
-        const address = await signer.getAddress(); // Ensure we use this method correctly in ethers v6.x
-  
-        console.log("Connected account:", address);
-        return { provider, signer };
+       
+        const tempContract = new ethers.Contract(contractAddress, contractABI, signer);
+        console.log("contract ",tempContract);
+        
+        setContract(tempContract);
+        return tempContract;
       } catch (error) {
         console.error("Connection to Metamask failed:", error);
-        return { provider: null, signer: null }; // Return nulls if there is an error
+        setError("Failed to connect to blockchain");
+        return null;
       }
     } else {
-      console.error("No Ethereum browser extension detected!");
-      return { provider: null, signer: null };
+      setError("No Ethereum browser extension detected!");
+      return null;
     }
-  }
+  };
 
   // Fetch the temperature when the modal opens
   useEffect(() => {
     if (open) {
-      connectToMetamask();
-      fetchTemperatureFromBlockchain();
+      const initializeAndFetch = async () => {
+        const contractInstance = await connectToMetamask();
+        if (contractInstance) {
+          await initializeSeedInBlockchain(contractInstance);
+          await fetchTemperatureForSeed(contractInstance);
+        }
+      };
+  
+      initializeAndFetch();
     }
   }, [open]);
+  
+  const initializeSeedInBlockchain = async (contractInstance) => {
+    if (!contractInstance) return;
 
+    try {
+      const blockchainSeedId = getBlockchainSeedId(seed._id);
+      
+      // Try to add the seed
+      try {
+        const tx = await contractInstance.addSeed(blockchainSeedId, seed.seedName);
+        await tx.wait();
+        console.log("Seed initialized in blockchain");
+      } catch (error) {
+        // If seed already exists, that's fine
+        if (!error.message.includes("Seed already exists")) {
+          throw error;
+        }
+      }
+    } catch (error) {
+      console.error("Error initializing seed:", error);
+      setError("Failed to initialize seed");
+    }
+  };
+  const fetchTemperatureForSeed = async (contractInstance) => {
+    if (!contractInstance) return;
+  
+    try {
+      setSeedTemperature('Fetching...');
+      const blockchainSeedId = getBlockchainSeedId(seed._id);
+      const seedData = await contractInstance.seeds(blockchainSeedId); // Fetch seed data
+      setSeedTemperature(seedData.currentTemperature.toString());
+    } catch (error) {
+      console.error("Error fetching temperature:", error);
+      setSeedTemperature('Error fetching temperature');
+      setError(error.message);
+    }
+  };
+  
   const handleAddToCart = async () => {
     setLoading(true);
     setMessage('');
@@ -201,8 +248,11 @@ const SeedCard = ({ seed }) => {
           <Typography>Farmer: {seed.farmerName}</Typography>
           <Typography>Contact: {seed.fContact}</Typography>
           <Typography>
-            <span className='text-[green]'>Current Temperature: {seedTemperature ? `${seedTemperature}°C` : 'Fetching...'}</span>
+              <span className='text-[green]'>
+                Current Temperature: {seedTemperature ? `${seedTemperature}°C` : 'Fetching...'}
+              </span>
           </Typography>
+
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
             <Button variant="outlined" color="error" onClick={handleClose}>
               Close

@@ -20,31 +20,59 @@ const SeedCardView = ({ onEdit, seed, onDelete }) => {
 
   const [signer, setSigner] = useState(null);
   const [provider, setProvider] = useState(null);
-  const [loading, setLoading] = useState(false);  // For transaction loading state
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState('');
+  const [blockchainSeedId, setBlockchainSeedId] = useState('');
 
   const connectToMetamask = async () => {
     if (typeof window.ethereum !== "undefined") {
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" });
-
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
-        const address = await signer.getAddress();
-
-        console.log("Connected account:", address);
         setProvider(provider);
         setSigner(signer);
+        
+        // Generate or retrieve blockchain seedId
+        const seedId = seed.blockchainSeedId || `seed_${seed._id.replace(/[^a-zA-Z0-9]/g, '')}`;
+        setBlockchainSeedId(seedId);
+        
+        // Initialize seed in blockchain if not already done
+        await initializeSeedInBlockchain(seedId, signer);
       } catch (error) {
         console.error("Connection to Metamask failed:", error);
+        setError("Failed to connect to Metamask");
         setProvider(null);
         setSigner(null);
       }
     } else {
-      console.error("No Ethereum browser extension detected!");
+      setError("No Ethereum browser extension detected!");
       setProvider(null);
       setSigner(null);
     }
   };
+
+  const initializeSeedInBlockchain = async (seedId, signer) => {
+    try {
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      
+      // Try to add the seed first
+      try {
+        const tx = await contract.addSeed(seedId, seed.seedName);
+        await tx.wait();
+        console.log("Seed initialized in blockchain");
+      } catch (error) {
+        // If error contains "Seed already exists", that's fine
+        if (!error.message.includes("Seed already exists")) {
+          throw error;
+        }
+      }
+    } catch (error) {
+      console.error("Error initializing seed in blockchain:", error);
+      setError("Failed to initialize seed in blockchain");
+    }
+  };
+
 
   useEffect(() => {
     connectToMetamask();
@@ -52,12 +80,13 @@ const SeedCardView = ({ onEdit, seed, onDelete }) => {
 
   const storeTemperatureWithBrowserProvider = async (seedId, currentTemperature) => {
     if (!provider || !signer) {
-      console.error("Signer or provider is not available");
+      setError("Please connect to Metamask first");
       return;
     }
 
     try {
-      setLoading(true);  // Set loading state before sending transaction
+      setLoading(true);
+      setError('');
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
       
       const tx = await contract.storeTemperature(seedId, currentTemperature);
@@ -67,15 +96,15 @@ const SeedCardView = ({ onEdit, seed, onDelete }) => {
       console.log("Transaction confirmed:", receipt);
     } catch (error) {
       console.error("Error sending transaction:", error);
+      setError(error.message || "Failed to store temperature");
     } finally {
-      setLoading(false);  // Reset loading state after transaction
+      setLoading(false);
     }
   };
 
   const handleStoreTemperature = () => {
-    const currentTemperature = seed.seedMinTemperature;  // Use seed's min temperature
-    const seedId = seed._id;
-    storeTemperatureWithBrowserProvider(seedId, currentTemperature);
+    const currentTemperature = parseInt(seed.seedMinTemperature+5);
+    storeTemperatureWithBrowserProvider(blockchainSeedId, currentTemperature);
   };
 
   return (
