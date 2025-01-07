@@ -1,1 +1,1 @@
-export const baseUri=`https://iota-w31e.onrender.com`;
+export const baseUri=`https://iota-iota.vercel.app/`;
