@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 
 app.use(
   cors({
-    origin: 'https://iota-iota.vercel.app/',
+    origin: 'http://localhost:5000',
     credentials: true,
   })
 );
